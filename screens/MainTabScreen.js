@@ -48,7 +48,7 @@ const MainTabScreen = ({ navigation }) => {
       name="CardItemDetails"
       component={CardItemDetails}
       options={() => ({
-        title: "Suggest a topic ",
+        title: "Play ",
         headerBackTitleVisible: false,
         tabBarVisible: false,
       })}

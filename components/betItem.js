@@ -5,7 +5,7 @@ import ButtonUI from './Button';
 import RBSheet from "react-native-raw-bottom-sheet";
 import BottomSheetUI from './BottomSheetUI';
 
-const BetItem = ({ itemData }) => {
+const BetItem = ({itemInfo, itemData }) => {
  const refRBSheet = useRef();
 
 
@@ -14,18 +14,22 @@ const BetItem = ({ itemData }) => {
 
       <RBSheet
         ref={ refRBSheet }
+        closeOnDragDown={true}
+        height={320}
       >
-        <BottomSheetUI itemData={itemData}/>
+        <BottomSheetUI Opponent={itemData.user_id} isMatchingBet={true} itemData={itemInfo}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
       </RBSheet>
 
+      
+            
       <View style={{ flexDirection: 'row', flex: 1 }}>
         <View style={{ flexDirection: 'row', flex: 2 }}>
 
-          <Avatar.Image size={24} style={styles.avatar} source={require('../assets/avatar.png')} />
-          <Text style={styles.betText}>   {itemData.username} chose  {itemData.choice}</Text>
+        <Avatar.Image size={24} style={styles.avatar} source={{uri: itemData.avatar}} />
+          <Text style={styles.betText}>   {itemData.username} chose  {itemData.bet_answer}</Text>
         </View>
 
-        <Text   style={styles.cardDetails}>{itemData.amount} SIA</Text>
+        <Text   style={styles.cardDetails}>{itemData.stake_amount} SIA</Text>
         <ButtonUI   onPressed={() => refRBSheet.current.open()} />
       </View>
     </TouchableOpacity>
@@ -43,7 +47,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
+avatar:{
+  backgroundColor: '#999'
 
+},
   cardImg: {
     height: '100%',
     width: '100%',

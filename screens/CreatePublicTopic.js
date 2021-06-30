@@ -1,26 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Text,
     TouchableOpacity,
     View, Image,
     TextInput,
-    StyleSheet, Platform, ScrollView
+    StyleSheet, Platform, ScrollView, Alert
 } from 'react-native';
 
 import { useTheme } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Note from '../components/Note.js'
+import PlayButton from '../components/PlayButton.js'
 import calender from '../assets/calender.png'
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import utils from '../model/utils'
 
 
 const createPublicTopic = () => {
+
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [isSending, setSending] = useState(false);
+    const [items, setItems] = useState([]);
 
     const { colors } = useTheme();
     const [date, setDate] = useState(new Date(1598051730000));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
-    const [dateTime, setTimeStamp] = useState(new Date(1598051730000));
+    const [dateTime, setTimeStamp] = useState('');
+    const [league, setLeague] = React.useState('');
+    const [question, setQuestion] = React.useState('');
+
+    const ref_input2 = useRef();
+    const ref_input3 = useRef();
+    useEffect(() => {
+        getRequests();
+    }, []);
+    const getRequests = () => {
+        setLoading(true)
+        return fetch(utils.ENDPONT + 'bet/get_categories')
+            .then((response) => response.json())
+            .then((json) => {
+                setLoading(false)
+                console.log(json)
+                setItems(json)
+            })
+            .catch((error) => {
+                console.error(error);
+                setLoading(false)
+
+            });
+    };
+    const submitData = async () => {
+        if (value == "" || league == "" || question==""){
+            return Alert.alert("Error","please fill all the fields");
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
+            body: JSON.stringify({
+                "user_id": "a996b562-d8c1-11eb-83b6-5820b1dbe674",
+                "topic_title": league,
+                "topic_type_id": "2",
+                "topic_question": question,
+                "topic_start_date": "2021-06-29 15:00:50",
+                "topic_category_id": value
+            })
+        };
+        setSending(true)
+        try {
+            const response = await fetch(utils.ENDPONT + 'bet/create_topic', requestOptions);
+            const json = await response.json();
+            setSending(false);
+
+            console.log(json);
+            const status = json.status
+            const message = json.response.message 
+            Alert.alert("Response",message);
+
+        } catch (error) {
+            console.error(error);
+            setSending(false);
+        }
+    };
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -65,27 +128,36 @@ const createPublicTopic = () => {
 
 
 
-                    <Text style={[styles.text_footer, { color: colors.text, marginTop: 8 }]}> Topic's Category</Text>
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Sport Category</Text>
                     <View style={styles.action}>
-                        <TextInput
-                            placeholder="Select category"
 
-                            autoCorrect={false}
-                            style={[
-                                styles.textInput,
-                                {
-                                    color: colors.text,
-                                },
-                            ]}
+
+
+                        <DropDownPicker
+                            loading={loading}
+                            open={open}
+                            placeholder="Select a category"
+                            value={value}
+                            items={items}
+                            searchable={true}
+                            setOpen={setOpen}
+                            setValue={setValue}
+                            setItems={setItems}
+                            listMode="MODAL"
+                            dropDownContainerStyle={{
+                                backgroundColor: "#000"
+                            }}
                         />
                     </View>
 
-                    <Text style={[styles.text_footer, { color: colors.text, marginTop: 8 }]}> Topic's title</Text>
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Game League</Text>
                     <View style={styles.action}>
                         <TextInput
                             placeholder="eg, Premier League"
-
-                            autoCorrect={false}
+                            onSubmitEditing={() => ref_input2.current.focus()}
+                            blurOnSubmit={false}
+                            returnKeyType="next"
+                            onChangeText={text => setLeague(text)}
                             style={[
                                 styles.textInput,
                                 {
@@ -94,12 +166,12 @@ const createPublicTopic = () => {
                             ]}
                         />
                     </View>
-                    <Text style={[styles.text_footer, { color: colors.text, marginTop: 8 }]}> Topic's Question</Text>
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Bet Question</Text>
                     <View style={styles.action}>
                         <TextInput
                             placeholder="eg, Will Chealse beat Arsenal?"
-
-                            autoCorrect={false}
+                            ref={ref_input2}
+                            onChangeText={text => setQuestion(text)}
                             style={[
                                 styles.textInput,
                                 {
@@ -109,11 +181,10 @@ const createPublicTopic = () => {
                         />
                     </View>
 
-                    <Text style={[styles.text_footer, { color: colors.text, marginTop: 8 }]}> Start date and time</Text>
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}>Played on</Text>
                     <View style={[styles.action, { flex: 1, flexDirection: 'row' }]}>
                         <TextInput
                             placeholder="Start date and time"
-                            autoCorrect={false}
                             value={dateTime}
                             style={[
                                 styles.textInput,
@@ -145,11 +216,8 @@ const createPublicTopic = () => {
                     <Note text="Note: When submitting a bet topic, the final result must be one of Yes or No, so make sure that you question can be answered by that. Once your suggestion has been approved, you will be awarded with 1K SIA." />
 
 
+                    <PlayButton isLoading={setSending} onPressed={submitData} headerText="Submit for review" subHeader="500 SIA submission fee" />
 
-                    <TouchableOpacity style={styles.commandButton} onPress={() => { }}>
-                        <Text style={styles.panelButtonTitle}>Submit for review</Text>
-                        <Text style={styles.panelButtonInfo}>500 SIA submission fee</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
 

@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 import {
   View,
   Text, Dimensions,
-
+  RefreshControl,
   Image,
   StyleSheet,
   StatusBar,
@@ -12,17 +12,16 @@ import {
 } from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { useTheme } from '@react-navigation/native';
-import { data } from '../model/data';
 import Card from '../components/TopicCard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import StarRating from '../components/StarRating';
 import BottomSheetUI from '../components/BottomSheetUI';
 import { color } from "react-native-reanimated";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
+import  utils from '../model/utils'
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
@@ -33,6 +32,62 @@ const HomeScreen = ({ navigation }) => {
   const theme = useTheme();
   const refRBSheet = useRef();
   const [selectedCategory, setCategory] = useState('All');
+  const [data, setData] = useState([]);
+  const [isRefreshing, setRefresh] = useState(false);
+
+  useEffect(() => {
+    getFeed();
+  }, []);
+  const getFeed = () => {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
+    };
+    setRefresh(true)
+    return fetch(utils.ENDPONT+'bet/topics_feed/3a8d6fe0-c0c0-11eb-bd9b-5820b1dbe674?q=' + selectedCategory, requestOptions)
+      .then((response) => response.json())
+      .then((json) => {
+        setRefresh(false)
+
+        console.log(json)
+        setData(json)
+      })
+      .catch((error) => {
+        console.error(error);
+        setRefresh(false)
+
+      });
+  };
+
+  const refreshControl = () => {
+    return (
+      <RefreshControl
+        refreshing={() => setRefresh(true)}
+        onRefresh={() => getFeed()}
+      />
+    );
+  }
+
+
+  const renderCategories = ({ item }) => {
+    return (
+      <View>
+        <View style={{ flexDirection: "row", flex: 1, alignContent: 'center', marginRight: 8, marginLeft: 8 }}>
+          <Text style={{ color: 'black', fontSize: 16, fontWeight: "bold", textAlign: 'center', alignSelf: "center" }}>{item.category_name}</Text>
+          <TouchableOpacity style={{ marginLeft: 20, textAlign: 'center', alignSelf: "center" }}>
+            <Ionicons color="#26AC79" name={item.isFavorite?"star":"star-outline"} size={24} />
+          </TouchableOpacity>
+
+        </View>
+        <FlatList
+          data={item.topics}
+          renderItem={renderItem}
+          keyExtractor={item => item.topics}
+        />
+      </View>
+    );
+  };
 
   const renderItem = ({ item }) => {
     return (
@@ -76,24 +131,11 @@ const HomeScreen = ({ navigation }) => {
 
   const changeCategory = (newState) => {
     setCategory(newState);
+    getFeed()
   };
 
 
-  renderHeader = () => (
-    <View style={styles.panel}>
-      <View style={{ alignItems: 'center' }}>
-        <Text style={styles.panelTitle}>Upload Photo</Text>
-        <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
-      </View>
 
-
-      <TouchableOpacity
-        style={styles.panelButton}
-        onPress={() => this.bs.current.snapTo(1)}>
-        <Text style={styles.panelButtonTitle}>Cancel</Text>
-      </TouchableOpacity>
-    </View>
-  );
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#FFF" barStyle={theme.dark ? 'light-content' : 'dark-content'} />
@@ -122,8 +164,7 @@ const HomeScreen = ({ navigation }) => {
           }}
         >
           {state.categories.map((category, index) => (
-            <TouchableOpacity key={index} onPress={() => setCategory(category.name)}
-
+            <TouchableOpacity key={index} onPress={() => changeCategory(category.name)}
               style={(selectedCategory == category.name) ? styles.chipsItemSelected : styles.chipsItem} >
               <Text style={(selectedCategory == category.name) ? styles.textItemSelected : styles.textItem}  >{category.name}</Text>
             </TouchableOpacity>
@@ -132,23 +173,25 @@ const HomeScreen = ({ navigation }) => {
 
       </View>
 
-
-      <ScrollView style={styles.container}>
+ 
 
         <View style={styles.cardsWrapper}>
-
-
           <FlatList
+ refreshControl={
+  <RefreshControl
+    refreshing={isRefreshing}
+    onRefresh={() => getFeed()}
+  />
+}
             data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
+            renderItem={renderCategories}
+            keyExtractor={item => item.category_id}
           />
 
 
 
         </View>
-      </ScrollView>
-    </View>
+     </View>
 
   );
 };
@@ -219,6 +262,7 @@ const styles = StyleSheet.create({
   },
   cardsWrapper: {
     width: '95%',
+    marginBottom:60,
     alignSelf: 'center',
   },
   card: {

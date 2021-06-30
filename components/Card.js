@@ -1,24 +1,29 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text,  StyleSheet, TouchableOpacity} from 'react-native';
+import { useTheme, Avatar, Divider } from 'react-native-paper';
 
 import StarRating from './StarRating';
+import user from '../assets/images/user32.png'
 
 const Card = ({itemData, onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
-        <View style={styles.cardImgWrapper}>
-          <Image
-            source={itemData.image}
-            resizeMode="cover"
-            style={styles.cardImg}
-          />
-        </View>
+
+
+     
         <View style={styles.cardInfo}>
+          <View style={{justifyContent:'center',alignItems:'center'}}>
+          <Avatar.Image size={48} style={styles.avatar} source={require('../assets/images/user1.png')} />
+
+          </View>
+          
+          <View style={{padding:8}}>
+
           <Text style={styles.cardTitle}>{itemData.title}</Text>
-          <StarRating ratings={itemData.ratings} reviews={itemData.reviews} />
-          <Text numberOfLines={2} style={styles.cardDetails}>{itemData.description}</Text>
-        </View>
+          <Text numberOfLines={1} style={styles.cardDetails}>{itemData.description}</Text>
+          </View>
+          </View>
       </View>
     </TouchableOpacity>
   );
@@ -28,7 +33,6 @@ export default Card;
 
 const styles = StyleSheet.create({
   card: {
-    height: 100,
     marginVertical: 10,
     flexDirection: 'row',
     shadowColor: '#999',
@@ -37,6 +41,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
+  avatar: {
+    marginRight: 5,
+    backgroundColor: '#999'
+},
   cardImgWrapper: {
     flex: 1,
   },
@@ -49,13 +57,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
   },
   cardInfo: {
-    flex: 2,
+    flex: 1,
+    flexDirection:'row',
     padding: 10,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderLeftWidth: 0,
-    borderBottomRightRadius: 8,
-    borderTopRightRadius: 8,
+    borderRadius: 8,
     backgroundColor: '#fff',
   },
   cardTitle: {

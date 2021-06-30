@@ -97,7 +97,6 @@ const App = () => {
     ...PaperDefaultTheme,
     colors: {
       primary: '#6200ee',
-      accent: '#03dac4',
       ...NavigationDefaultTheme.colors,
       ...PaperDefaultTheme.colors,
       background: '#ffffff',
@@ -113,7 +112,6 @@ const App = () => {
     ...PaperDarkTheme,
     colors: {
       primary: '#6200ee',
-      accent: '#03dac4',
       ...NavigationDarkTheme.colors,
       ...PaperDarkTheme.colors,
       background: '#333333',
@@ -184,9 +182,8 @@ const App = () => {
       }
       dispatch({ type: 'LOGOUT' });
     },
-    signUp: () => {
-      // setUserToken('fgkj');
-      // setIsLoading(false);
+    signUp: (userName,userToken) => {
+      dispatch({ type: 'LOGIN', id: userName, token: userToken });
     },
     toggleTheme: () => {
       setIsDarkTheme( isDarkTheme => !isDarkTheme );
@@ -207,6 +204,10 @@ const App = () => {
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
     }, 1000);
   }, []);
+
+
+
+
 
   if( loginState.isLoading ) {
     return(
