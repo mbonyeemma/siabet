@@ -4,9 +4,16 @@ import PlayButton from './PlayButton';
 import utils from '../model/utils';
 
 import StarRating from './StarRating';
+import success from '../assets/success.png'
+import fail from '../assets/fail.png'
+import { AuthContext } from '../components/context';
 
-const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet }) => {
+
+const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponent ,OpponentBetId}) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setComplete] = useState("");
+  const { userData } = React.useContext(AuthContext);
+
   var userChoice = betChoice
   var stake_amount = itemData.stake_amount
   if (isMatchingBet) {
@@ -22,37 +29,37 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet }) => {
 
     console.log(itemData)
 
-    const requestOptions = {
+    const requestOption = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
+      headers: { 'Content-Type': 'application/json', 'Authorization': userData.jwt },
       body: JSON.stringify({
-        "user_id": "77f845bc-d8c1-11eb-b271-5820b1dbe674",
+        "user_id": userData.user_id,
+        "opponent_bet_id": OpponentBetId,
         "topic_id": itemData.topic_id,
         "bet_type": PlayerChoice,
-        "opponent_user_id": "",
+        "opponent_user_id": Opponent,
         "stake_amount": amount,
         "asset_code": "SIA",
         "answer": userChoice
       })
     };
-    console.log(requestOptions)
+    console.log(requestOption)
     setIsLoading(true)
 
 
 
     try {
-      console.log(requestOptions)
-
-      const response = await fetch(utils.ENDPONT + 'bet/place_bet', requestOptions);
+ 
+      const response = await fetch(utils.ENDPONT + 'bet/place_bet', requestOption);
       const json = await response.json();
       console.log(json)
       setIsLoading(false);
       const status = json.status;
       const message = json.message;
       if (status == 100) {
-        Alert.alert("Success", message);
+        Alert.alert("success",message);
       } else {
-        Alert.alert("Failed", message);
+        Alert.alert("failed",message);
       }
     } catch (error) {
       console.error(error);
@@ -66,7 +73,18 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet }) => {
 
   return (
     <View style={styles.panel}>
+
+      {isComplete!=""?<View style={{flex:1,alignContent:'center'}}>
+        <Image source={success} style={{width:100,height:100,marginBottom:30,alignItems:'center'}}/>
+        <Text style={styles.panelTitle}>Success</Text>
+        <Text style={styles.answerHeader}>Your bet has been placed, sit back, relax and wait for the game results.</Text>
+
+      </View>:
+      
+      
+      
       <View style={{ alignItems: 'center' }}>
+
         <Text style={styles.panelTitle}>Place Bet</Text>
         <Text style={styles.panelSubtitle}>
           {itemData.topic_question}
@@ -92,15 +110,15 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet }) => {
 
 
 
+        <PlayButton onPressed={submitBet} isLoading={isLoading} headerText="Play" subHeader={`Confirm to stake ${amount} SIA`} />
 
       </View>
 
 
 
 
-      <PlayButton onPressed={submitBet} isLoading={isLoading} headerText="Play" subHeader={`Confirm to stake ${amount} SIA`} />
 
-
+  }
     </View>
   );
 };

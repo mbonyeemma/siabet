@@ -14,6 +14,7 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { useTheme, Button,ActivityIndicator,Colors } from 'react-native-paper';
 
@@ -23,6 +24,7 @@ import Users from '../model/users';
 import utils from '../model/utils';
 
 const SignInScreen = ({ navigation }) => {
+    const { signUp } = React.useContext(AuthContext);
 
     const [data, setData] = React.useState({
         username: '',
@@ -119,12 +121,8 @@ const SignInScreen = ({ navigation }) => {
             if (status == 100) {
                 const userToken = json.data.user_id;
                 const userName = json.data.username;
-                const user_data = JSON.stringify(json.data)
-                await AsyncStorage.setItem('userToken', userToken);
-                await AsyncStorage.setItem('data', user_data);
                 setIsLoading(false);
-
-                signUp(userToken, userName);
+                signUp(JSON.stringify(json.data));
             } else {
                 setIsLoading(false);
                 Alert.alert("Failed", message);
@@ -240,7 +238,7 @@ const SignInScreen = ({ navigation }) => {
 
                 <View  style={{marginTop:20}}>
                
-                <SubmitButton text="Signup"  onPressed={postInfo} isLoading={loading} />
+                <SubmitButton text="Login"  onPressed={postInfo} isLoading={loading} />
 
                 <TouchableOpacity
                         onPress={() => navigation.navigate('SignUpScreen')}
@@ -341,7 +339,6 @@ const styles = StyleSheet.create({
         borderColor:'#26AC79'
     },
     textSign: {
-        fontSize: 18,
-        fontWeight: 'bold'
+        fontSize: 16,
     }
 });

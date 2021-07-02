@@ -2,40 +2,31 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
-  Image,
-  StyleSheet, Alert,
-  Dimensions,
-  StatusBar,
+  StyleSheet, Dimensions,
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import HeaderImageScrollView, {
-  TriggeringView,
-} from 'react-native-image-header-scroll-view';
 
-import * as Animatable from 'react-native-animatable';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useTheme, Avatar, Divider } from 'react-native-paper';
-import { Modal, Portal, Button, Provider } from 'react-native-paper';
+import { useTheme, Divider } from 'react-native-paper';
 
-import { block } from 'react-native-reanimated';
 import PlayButton from '../components/PlayButton.js'
-import ContactsComponent from '../components/contactsComponent.js'
 import utils from '../model/utils';
 import BottomSheetUI from '../components/BottomSheetUI'
+import Card from '../components/UserCard';
 
 import RBSheet from "react-native-raw-bottom-sheet";
 const MIN_HEIGHT = Platform.OS === 'ios' ? 90 : 55;
 const MAX_HEIGHT = 250;
 
-const CardItemDetails = ({ route }) => {
+const TopicItemDetail = ({ navigation,route }) => {
   const refRBSheet = useRef();
 
   const itemData = route.params.itemData;
   const navTitleView = useRef(null);
   const { colors } = useTheme();
   const [visible, setVisible] = React.useState(false);
+  const [selected, onSelect] = React.useState('');
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -52,47 +43,35 @@ const CardItemDetails = ({ route }) => {
   const [playerChoice, setPlayer] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [opponentId, setOpponentId] = useState('');
+  const [opponetUsername, SetOpponetUsername] = useState('random user');
+  const [userData, setUserData] = useState([]);
   
-  const selectComponent = () => {
-    setPlayer("Opponent")
-    showModal();
-  }
-
-  const submitBet = async () => {
    
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
-      body: JSON.stringify({
-        "user_id": "77f845bc-d8c1-11eb-b271-5820b1dbe674",
-        "topic_id": itemData.topic_id,
-        "bet_type": playerChoice,
-        "opponent_user_id": "",
-        "stake_amount": edited_stake_amount,
-        "asset_code": "SIA",
-        "answer": betChoice
-      })
-    };
-    setIsLoading(true)
+ 
+ 
 
+const get_player=()=>{
+  navigation.navigate("contactScreen", { onSelect: updateData });
+}
+const updateData = data => {
+  console.log(data)
+  setPlayer('p2p')
+  setOpponentId(data.user_id)
+  SetOpponetUsername(data.username)
+  setUserData(data)
+  
+ }
 
-
-
-  };
-
-
-
-
+ const setRandom =()=> {
+  setPlayer("random")
+  SetOpponetUsername("random user")
+ }
 
 
   return (
 
     <ScrollView style={styles.container}>
-      <Portal>
-        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-          <ContactsComponent />
-        </Modal>
-      </Portal>
+  
 
 
       <View style={{ backgroundColor: "#F1F1F1" }}>
@@ -157,10 +136,10 @@ const CardItemDetails = ({ route }) => {
               <Text style={styles.title}>Who are you going to play against?</Text>
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TouchableOpacity onPress={() => setPlayer("random")} style={(playerChoice == 'random') ? styles.playerChoiceSelected : styles.playerChoice}>
+                <TouchableOpacity onPress={setRandom} style={(playerChoice == 'random') ? styles.playerChoiceSelected : styles.playerChoice}>
                   <Text style={{ color: '#FFF' }} >Random Player </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={selectComponent} style={(playerChoice == 'Opponent') ? styles.playerChoiceSelected : styles.playerChoice}>
+                <TouchableOpacity  onPress={get_player} style={(playerChoice == 'p2p') ? styles.playerChoiceSelected : styles.playerChoice}>
                   <Text style={{ color: '#FFF' }}  >Select Opponent </Text>
                 </TouchableOpacity>
               </View>
@@ -169,8 +148,10 @@ const CardItemDetails = ({ route }) => {
 
             {playerChoice == "" ? <View></View> :
               <View style={{ marginTop: 10, marginBottom: 10 }} >
-                <Text style={styles.title}>You are playing random user for {selectedAmount} SIA</Text>
+                {playerChoice=="p2p"?<Card itemData={userData} showButton={false}/>:<View></View>}
+                <Text style={styles.title}>You are playing {opponetUsername}  for {selectedAmount} SIA</Text>
                 <PlayButton  onPressed={() => refRBSheet.current.open()}  headerText="Play" subHeader="Possible return 2K SIA" />
+
 
               </View>}
           </View>
@@ -181,7 +162,7 @@ const CardItemDetails = ({ route }) => {
             closeOnDragDown={true}
             height={320}
           >
-            <BottomSheetUI Opponent={opponentId} isMatchingBet={false} itemData={itemData} PlayerChoice={playerChoice} amount={selectedAmount} betChoice={betChoice} />
+            <BottomSheetUI Opponent={opponentId} OpponentBetId="" isMatchingBet={false} itemData={itemData} PlayerChoice={playerChoice} amount={selectedAmount} betChoice={betChoice} />
           </RBSheet>
             : <View></View>}
 
@@ -198,7 +179,7 @@ const CardItemDetails = ({ route }) => {
   );
 };
 
-export default CardItemDetails;
+export default TopicItemDetail;
 
 const styles = StyleSheet.create({
 

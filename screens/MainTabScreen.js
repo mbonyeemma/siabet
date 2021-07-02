@@ -14,8 +14,10 @@ import ProfileScreen from './ProfileScreen';
 import { useTheme } from 'react-native-paper';
 import { View } from 'react-native-animatable';
 import NotificationScreen from './NotificationScreen';
-import CardItemDetails from './CardItemDetails';
+import TopicItemDetail from './TopicItemDetail';
 import CreatePublicTopic from './CreatePublicTopic';
+import contactScreen from './contactScreen';
+
 const TopicStack = createStackNavigator();
 const mainStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -45,15 +47,24 @@ const MainTabScreen = ({ navigation }) => {
 
 
     <TopicStack.Screen
-      name="CardItemDetails"
-      component={CardItemDetails}
+      name="TopicItemDetail"
+      component={TopicItemDetail}
       options={() => ({
         title: "Play ",
         headerBackTitleVisible: false,
         tabBarVisible: false,
       })}
     />
-
+ 
+<TopicStack.Screen
+      name="contactScreen"
+      component={contactScreen}
+      options={() => ({
+        title: "Search Player ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
 
     <TopicStack.Screen
       name="CreatePublicTopic"

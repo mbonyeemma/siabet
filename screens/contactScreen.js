@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { View, TextInput, SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import {
   Avatar,
@@ -11,39 +11,87 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import Share from 'react-native-share';
-import { data } from '../model/data';
-import Card from '../components/Card';
-import files from '../assets/filesBase64';
+import Card from '../components/UserCard';
 
-const contactsComponent = (navigation) => {
+import { AuthContext } from '../components/context';
+
+
+import Share from 'react-native-share';
+import utils from '../model/utils';
+
  
+
+
+const contactScreen = ({route, navigation}) => {
+  const { userData } = React.useContext(AuthContext);
+
+
+  const [data, setData] = useState([]);
+  const [isRefreshing, setRefresh] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const GoItemBack = (data) => {
+    route.params.onSelect(data)
+    navigation.goBack();
+  }
 
   const renderItem = ({ item }) => {
     return (
       <Card
         itemData={item}
-        onPress={() => navigation.navigate('CardItemDetails', { itemData: item })}
+        showButton = {true}
+        onPress={()=>GoItemBack(item)}
       />
     );
   };
-  const HeaderComponent = ({ item }) => {
-    return (
-      <View style={{ marginLeft: 10 ,textAlign:'center',flexDirection:'row'}}>
-      <MaterialIcons
-        name="cancel"
-        size={25}
-        onPress={() => goback}
-      />
-              <Text style={{fontSize:15,marginLeft:10,fontWeight:'bold'}}>  Select user</Text>
 
-    </View>
-  );
-  }
+  useEffect(() => {
+    get_all_users("");
+  }, []);
+   
+  const get_all_users = async (query) => {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+    try {
+      const response = await fetch(utils.ENDPONT + 'user/search_users?q='+query);
+      const json = await response.json();
+      console.log(json);
+      setData(json);
+      setRefresh(false);
+    } catch (error) {
+      console.error(error);
+      setRefresh(false);
+    }
+  };
+
+
+  const get_following = async () => {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+    try {
+      const response = await fetch(utils.ENDPONT + 'user/following/'+userData.user_id);
+      const json = await response.json();
+      console.log(json);
+      setData(json);
+      setRefresh(false);
+    } catch (error) {
+      console.error(error);
+      setRefresh(false);
+    }
+  };
+
+
+
+   
 
   return (
     <SafeAreaView style={styles.container}>
-<HeaderComponent/>
      
 
 
@@ -52,6 +100,7 @@ const contactsComponent = (navigation) => {
           placeholder="Search here"
           placeholderTextColor="#000"
           autoCapitalize="none"
+          onChangeText={text => get_all_users(text)}
           style={{ flex: 1, padding: 0 }}
         />
         <Ionicons name="ios-search" size={20} />
@@ -71,21 +120,22 @@ const contactsComponent = (navigation) => {
   );
 };
 
-export default contactsComponent;
+export default contactScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding:8,
+    backgroundColor:'#F1F1F1'
   },
   searchBox: {
-    marginTop: Platform.OS === 'ios' ? 40 : 20,
     flexDirection: "row",
     backgroundColor: '#fff',
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
     borderRadius: 5,
-    padding: 10,
-    shadowColor: '#ccc',
+    padding: 8,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 5,

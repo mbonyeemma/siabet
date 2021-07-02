@@ -14,6 +14,7 @@ import {
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 import utils from '../model/utils';
@@ -27,7 +28,7 @@ const SignInScreen = ({ navigation }) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
-        confirm_password: '',
+        email: '',
         check_textInputChange: false,
         secureTextEntry: true,
         confirm_secureTextEntry: true,
@@ -42,9 +43,9 @@ const SignInScreen = ({ navigation }) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                "username": "rojal",
-                "password": "12345",
-                "email": "dora@clic.world"
+                "username": data.username,
+                "password": data.password,
+                "email": data.email
             })
         };
         console.log(requestOptions)
@@ -64,10 +65,9 @@ const SignInScreen = ({ navigation }) => {
             if (status == 100) {
                 const userToken = json.data.user_id;
                 const userName = json.data.username;
-                const user_data = JSON.stringify(json.data)
-                await AsyncStorage.setItem('userToken', userToken);
-                await AsyncStorage.setItem('data', user_data);
-                signUp(userToken, userName);
+
+                console.log(JSON.stringify(json.data))
+                signUp(JSON.stringify(json.data));
             } else {
                 Alert.alert("Failed", message);
             }
@@ -101,10 +101,10 @@ const SignInScreen = ({ navigation }) => {
         });
     }
 
-    const handleConfirmPasswordChange = (val) => {
+    const handleEmailChange = (val) => {
         setData({
             ...data,
-            confirm_password: val
+            email: val
         });
     }
 
@@ -133,6 +133,31 @@ const SignInScreen = ({ navigation }) => {
                 style={styles.footer}
             >
                 <View>
+                <Text style={styles.text_footer}> </Text>
+                    <View style={styles.action}>
+                        <Icon
+                            name="mail"
+                            color="#05375a"
+                            size={20}
+                        />
+                        <TextInput
+                            placeholder="Enter Email"
+                            style={styles.textInput}
+                            autoCapitalize="none"
+                            onChangeText={(val) => handleEmailChange(val)}
+                        />
+                        {data.check_textInputChange ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
                     <Text style={styles.text_footer}> </Text>
                     <View style={styles.action}>
                         <FontAwesome
@@ -194,40 +219,7 @@ const SignInScreen = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={[styles.text_footer, {
-                        marginTop: 8
-                    }]}> </Text>
-                    <View style={styles.action}>
-                        <Feather
-                            name="lock"
-                            color="#05375a"
-                            size={20}
-                        />
-                        <TextInput
-                            placeholder="Confirm Password"
-                            secureTextEntry={data.confirm_secureTextEntry ? true : false}
-                            style={styles.textInput}
-                            autoCapitalize="none"
-                            onChangeText={(val) => handleConfirmPasswordChange(val)}
-                        />
-                        <TouchableOpacity
-                            onPress={updateConfirmSecureTextEntry}
-                        >
-                            {data.secureTextEntry ?
-                                <Feather
-                                    name="eye-off"
-                                    color="grey"
-                                    size={20}
-                                />
-                                :
-                                <Feather
-                                    name="eye"
-                                    color="grey"
-                                    size={20}
-                                />
-                            }
-                        </TouchableOpacity>
-                    </View>
+                   
                     <View style={styles.textPrivate}>
                         <Text style={styles.color_textPrivate}>
                             By signing up you agree to our

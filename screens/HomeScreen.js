@@ -26,38 +26,65 @@ const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
+import { AuthContext } from '../components/context';
+import  StellarSdk from 'stellar-sdk'
 
 
 const HomeScreen = ({ navigation }) => {
+  const { userData } = React.useContext(AuthContext);
+  const server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
+
   const theme = useTheme();
   const refRBSheet = useRef();
   const [selectedCategory, setCategory] = useState('All');
   const [data, setData] = useState([]);
   const [isRefreshing, setRefresh] = useState(false);
+  const [state, setState] = useState([]);
 
   useEffect(() => {
-    getFeed();
+    get_account(userData.publicKey)
+    get_categories()
   }, []);
-  const getFeed = () => {
+
+  const get_categories = async () => {
+    setRefresh(true);
+    try {
+        const response = await fetch(utils.ENDPONT + 'bet/get_categories?q=home');
+        const json = await response.json();
+        console.log(json)
+        setState(json);
+        getFeed();
+
+    } catch (error) {
+        console.error(error);
+     }
+};
+
+function get_account(accountId) {
+	server.accounts().accountId(accountId).call().then(function(accountResult) {
+		console.log(accountResult);
+	}).catch(function(err) {
+		console.error(err);
+	});
+}
+
+  const getFeed = async () => {
 
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
     };
     setRefresh(true)
-    return fetch(utils.ENDPONT+'bet/topics_feed/3a8d6fe0-c0c0-11eb-bd9b-5820b1dbe674?q=' + selectedCategory, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        setRefresh(false)
-
-        console.log(json)
-        setData(json)
-      })
-      .catch((error) => {
-        console.error(error);
-        setRefresh(false)
-
-      });
+    try {
+      const response = await fetch(utils.ENDPONT + 'bet/topics_feed/' + userData.user_id + '?q=' + selectedCategory, requestOptions);
+      const json = await response.json();
+      console.log(json);
+      setData(json);
+      setRefresh(false);
+    } catch (error) {
+      console.error(error);
+      setRefresh(false);
+    }
   };
 
   const refreshControl = () => {
@@ -93,41 +120,12 @@ const HomeScreen = ({ navigation }) => {
     return (
       <Card
         itemData={item}
-        onPress={() => navigation.navigate('CardItemDetails', { itemData: item })}
+        onPress={() => navigation.navigate('TopicItemDetail', { itemData: item })}
       />
     );
   };
 
-  const initialMapState = {
-    categories: [
-      {
-        name: 'All',
-        icon: <MaterialCommunityIcons style={styles.chipsIcon} name="food-fork-drink" size={18} />,
-      },
-      {
-        name: 'Favorites',
-        icon: <MaterialCommunityIcons style={styles.chipsIcon} name="food-fork-drink" size={18} />,
-      },
-      {
-        name: 'American Football',
-        icon: <Ionicons name="ios-restaurant" style={styles.chipsIcon} size={18} />,
-      },
-      {
-        name: 'Soccer',
-        icon: <Ionicons name="md-restaurant" style={styles.chipsIcon} size={18} />,
-      },
-      {
-        name: 'Basket Ball',
-        icon: <MaterialCommunityIcons name="food" style={styles.chipsIcon} size={18} />,
-      },
-      {
-        name: 'Volley Ball',
-        icon: <Fontisto name="hotel" style={styles.chipsIcon} size={15} />,
-      },
-    ],
-  };
-
-  const [state, setState] = useState(initialMapState);
+ 
 
   const changeCategory = (newState) => {
     setCategory(newState);
@@ -163,10 +161,10 @@ const HomeScreen = ({ navigation }) => {
             paddingRight: Platform.OS === 'android' ? 20 : 0
           }}
         >
-          {state.categories.map((category, index) => (
-            <TouchableOpacity key={index} onPress={() => changeCategory(category.name)}
-              style={(selectedCategory == category.name) ? styles.chipsItemSelected : styles.chipsItem} >
-              <Text style={(selectedCategory == category.name) ? styles.textItemSelected : styles.textItem}  >{category.name}</Text>
+          {state.map((category, index) => (
+            <TouchableOpacity key={index} onPress={() => changeCategory(category.label)}
+              style={(selectedCategory == category.label) ? styles.chipsItemSelected : styles.chipsItem} >
+              <Text style={(selectedCategory == category.label) ? styles.textItemSelected : styles.textItem}  >{category.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

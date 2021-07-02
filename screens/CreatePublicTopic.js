@@ -14,9 +14,12 @@ import PlayButton from '../components/PlayButton.js'
 import calender from '../assets/calender.png'
 import DropDownPicker from 'react-native-dropdown-picker';
 import utils from '../model/utils'
+import { Root, Popup,Toast } from 'popup-ui'
+import { AuthContext } from '../components/context';
 
 
 const createPublicTopic = () => {
+    const { userData } = React.useContext(AuthContext);
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
@@ -37,20 +40,18 @@ const createPublicTopic = () => {
     useEffect(() => {
         getRequests();
     }, []);
-    const getRequests = () => {
+    const getRequests = async () => {
         setLoading(true)
-        return fetch(utils.ENDPONT + 'bet/get_categories')
-            .then((response) => response.json())
-            .then((json) => {
-                setLoading(false)
-                console.log(json)
-                setItems(json)
-            })
-            .catch((error) => {
-                console.error(error);
-                setLoading(false)
-
-            });
+        try {
+            const response = await fetch(utils.ENDPONT + 'bet/get_categories?q=topic');
+            const json = await response.json();
+            setLoading(false);
+            console.log(json);
+            setItems(json);
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+        }
     };
     const submitData = async () => {
         if (value == "" || league == "" || question==""){
@@ -58,9 +59,9 @@ const createPublicTopic = () => {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': utils.Auth },
+            headers: { 'Content-Type': 'application/json', 'Authorization': userData.jwt },
             body: JSON.stringify({
-                "user_id": "a996b562-d8c1-11eb-83b6-5820b1dbe674",
+                "user_id": userData.user_id,
                 "topic_title": league,
                 "topic_type_id": "2",
                 "topic_question": question,
@@ -76,8 +77,13 @@ const createPublicTopic = () => {
 
             console.log(json);
             const status = json.status
-            const message = json.response.message 
-            Alert.alert("Response",message);
+            const message = json.message 
+            if(status == 100){
+Alert.alert("success", message)
+            }else{
+                Alert.alert("failed", message)
+
+            }
 
         } catch (error) {
             console.error(error);
@@ -117,7 +123,21 @@ const createPublicTopic = () => {
         showMode('time');
     };
 
-
+const ShowSuccess=()=>{
+    Toast.show({
+        title: 'User created',
+        text: 'Your user was successfully created, use the app now.',
+        color: '#2ecc71',
+        timing: 2000,
+        icon: (
+          <Image
+            source={require('../assets/fail.png')}
+            style={{ width: 25, height: 25 }}
+            resizeMode="contain"
+          />
+        ),
+      })
+}
 
 
     return (
@@ -126,7 +146,8 @@ const createPublicTopic = () => {
                 <View style={styles.cardInfo}>
 
 
-
+                
+           
 
                     <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Sport Category</Text>
                     <View style={styles.action}>
@@ -216,7 +237,7 @@ const createPublicTopic = () => {
                     <Note text="Note: When submitting a bet topic, the final result must be one of Yes or No, so make sure that you question can be answered by that. Once your suggestion has been approved, you will be awarded with 1K SIA." />
 
 
-                    <PlayButton isLoading={setSending} onPressed={submitData} headerText="Submit for review" subHeader="500 SIA submission fee" />
+                    <PlayButton isLoading={isSending} onPressed={submitData} headerText="Submit for review" subHeader="100 SIA submission fee" />
 
                 </View>
             </View>
