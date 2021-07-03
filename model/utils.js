@@ -6,7 +6,7 @@ export default {
       base: 12,
     },
   
-    
+    HORIZON:'https://horizon-testnet.stellar.org',
       ENDPONT: 'http://192.168.43.169:8000/',
       Auth:'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IkthZ2FtZSIsInBhc3N3b3JkIjoiZWJhdmEifQ.vCXkMXQbPGbE7xFFufevVSwPDHLZ8Lo2j5nxKgbujhw',
     colors: {

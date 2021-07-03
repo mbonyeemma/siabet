@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, RefreshControl, FlatList, StyleSheet } from 'react-native';
+import { View, SafeAreaView, RefreshControl, TouchableOpacity,FlatList, StyleSheet } from 'react-native';
 import {
   Avatar,
   Title,
@@ -8,16 +8,17 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AuthContext } from '../components/context';
 
 import Share from 'react-native-share';
 import Card from '../components/Card';
 import files from '../assets/filesBase64';
 import utils from '../model/utils';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const ProfileScreen = (navigation) => {
-  const { userData } = React.useContext(AuthContext);
+const Wallet = ({navigation}) => {
+  const { userData, account } = React.useContext(AuthContext);
 
   const [following, setFollowing] = useState(0);
   const [followers, setFollowers] = useState(0);
@@ -31,6 +32,7 @@ const ProfileScreen = (navigation) => {
   useEffect(() => {
     get_profile();
   }, []);
+
   const get_profile = async () => {
     try {
       setRefresh(true)
@@ -57,7 +59,7 @@ const ProfileScreen = (navigation) => {
       headers: { 'Content-Type': 'application/json' },
     };
     try {
-      const response = await fetch(utils.ENDPONT + 'bet/user_bets/'+userData.user_id);
+      const response = await fetch(utils.ENDPONT + 'bet/user_bets/' + userData.user_id);
       const json = await response.json();
       console.log(json);
       setData(json);
@@ -68,69 +70,74 @@ const ProfileScreen = (navigation) => {
     }
   };
 
+  const getBalance = (account, currency) => {
+    try {
 
+      let balance = 0;
+      if (currency == "XLM") {
+        balance = Number.parseFloat(account.balances.find((b) => b.asset_type == "native").balance);
+      } else {
+        balance = Number.parseFloat(account.balances.find((b) => b.asset_code == currency).balance);
+      }
+      return balance;
+    } catch (err) {
+      return 0
+    }
+
+
+  };
 
   const renderItem = ({ item }) => {
     return (
       <Card
         itemData={item}
-        onPress={() => navigation.navigate('CardItemDetails', { itemData: item })}
       />
     );
   };
+  const goto =() =>{
+    navigation.navigate('WalletReceive')
+  }
 
   return (
     <SafeAreaView style={styles.container}>
 
       <View style={styles.userInfoSection}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-          <View style={styles.section}>
-            <Paragraph style={[styles.paragraph, styles.captiontext]}>{following}</Paragraph>
-            <Caption style={styles.caption}>Following</Caption>
-          </View>
-
-          <View>
-            <Avatar.Image
-              style={{ backgroundColor: 'gray' }}
-              source={{
-                uri: userData.avatar
-              }}
-              size={60}
-            />
-            <Caption style={styles.captionUser}>@{userData.username}</Caption>
-          </View>
-
-          <View style={styles.section}>
-            <Paragraph style={[styles.paragraph, styles.captiontext]}>{followers}</Paragraph>
-            <Caption style={styles.caption}>Followers</Caption>
-          </View>
 
 
+
+
+        <View style={styles.section}>
+          <Text style={styles.captiontext}>{getBalance(account, "SIA")} SIA</Text>
         </View>
+
+
       </View>
 
 
 
       <View style={styles.infoBoxWrapper}>
 
-        <View style={styles.sectionBox}>
-          <Paragraph style={[styles.paragraph, styles.captiontext]}>{played}</Paragraph>
-          <Caption style={styles.caption}>Played</Caption>
-        </View>
+        <TouchableOpacity onPress={goto} style={styles.sectionBox}>
+          <View>
+            <FontAwesome5 color="#26AC79" style={{ alignSelf: 'center' }} name="arrow-down" size={24} />
+
+            <Caption style={styles.caption}>Receive</Caption>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=> navigation.navigate('WalletTransfer')} style={styles.sectionBox}>
+          <FontAwesome5 color="red" style={{ alignSelf: 'center' }} name="arrow-up" size={24} />
+          <Caption style={styles.caption}>Send</Caption>
+        </TouchableOpacity>
 
         <View style={styles.sectionBox}>
-          <Paragraph style={[styles.paragraph, styles.captiontext]}>{won}</Paragraph>
-          <Caption style={styles.caption}>Won</Caption>
-        </View>
-
-        <View style={styles.sectionBox}>
-          <Paragraph style={[styles.paragraph, styles.captiontext]}>{lost}</Paragraph>
-          <Caption style={styles.caption}>Lost</Caption>
+          <FontAwesome5 color="blue" style={{ alignSelf: 'center' }} name="exchange-alt" size={24} />
+          <Caption style={styles.caption}>Exchange</Caption>
         </View>
 
       </View>
 
-      <View style={{ flex: 1, marginTop: 20,padding:16,backgroundColor:'#FFF' }} >
+      <View style={{ flex: 1, marginTop: 20, padding: 16, backgroundColor: '#FFF' }} >
         <FlatList
           refreshControl={
             <RefreshControl
@@ -150,7 +157,7 @@ const ProfileScreen = (navigation) => {
   );
 };
 
-export default ProfileScreen;
+export default Wallet;
 
 const styles = StyleSheet.create({
   container: {
@@ -164,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 8,
     textAlign: 'center',
+    alignSelf: 'center',
     justifyContent: 'center',
     borderColor: 'gray',
     elevation: 5,
@@ -177,7 +185,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   userInfoSection: {
-    marginBottom: 25,
+    marginTop: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -185,12 +194,13 @@ const styles = StyleSheet.create({
   },
 
   captiontext: {
-    fontSize: 14,
+    fontSize: 30,
     color: '#000',
-    lineHeight: 14,
     fontWeight: 'bold',
     textAlign: 'center'
-  }, caption: {
+  },
+
+  caption: {
     fontSize: 14,
     lineHeight: 14,
     fontWeight: 'bold',

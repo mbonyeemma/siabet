@@ -17,14 +17,43 @@ import NotificationScreen from './NotificationScreen';
 import TopicItemDetail from './TopicItemDetail';
 import CreatePublicTopic from './CreatePublicTopic';
 import contactScreen from './contactScreen';
+import Wallet from './Wallet';
+import WalletReceive from './WalletReceive';
+import WalletTransfer from './WalletTransfer';
 
 const TopicStack = createStackNavigator();
 const mainStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
+import { AuthContext } from '../components/context';
+
+
+
+
 
 const MainTabScreen = ({ navigation }) => {
+  const { userData, account,updateBalance} = React.useContext(AuthContext);
+
   const { colors } = useTheme();
+
+    
+
+  const getBalance = (account, currency) => {
+    try{
+    
+        let balance = 0;
+        if (currency == "XLM") {
+            balance = Number.parseFloat(account.balances.find((b) => b.asset_type == "native").balance);
+        } else {
+            balance = Number.parseFloat(account.balances.find((b) => b.asset_code == currency).balance);
+        }
+        return balance;
+      }catch(err) {
+      }
+     
+
+    };
+
 
   return (<mainStack.Navigator>
     <mainStack.Screen name="MainTabScreen" options={{
@@ -41,7 +70,7 @@ const MainTabScreen = ({ navigation }) => {
         </View>
       ),
       headerRight: () => (
-        <Header />
+        <Header navigation={navigation} balance={getBalance(account,"SIA")} />
       ),
     }} component={HomeTabs} />
 
@@ -56,6 +85,37 @@ const MainTabScreen = ({ navigation }) => {
       })}
     />
  
+ <TopicStack.Screen
+      name="Wallet"
+      component={Wallet}
+      options={() => ({
+        title: "My Wallet ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+ 
+ <TopicStack.Screen
+      name="WalletReceive"
+      component={WalletReceive}
+      options={() => ({
+        title: "Receive Assets ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+    <TopicStack.Screen
+      name="WalletTransfer"
+      component={WalletTransfer}
+      options={() => ({
+        title: "Transfer Assets ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+
+    
+
 <TopicStack.Screen
       name="contactScreen"
       component={contactScreen}

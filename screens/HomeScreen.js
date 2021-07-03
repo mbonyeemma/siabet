@@ -22,17 +22,19 @@ import BottomSheetUI from '../components/BottomSheetUI';
 import { color } from "react-native-reanimated";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import  utils from '../model/utils'
+
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 import { AuthContext } from '../components/context';
-import  StellarSdk from 'stellar-sdk'
+
+
+
 
 
 const HomeScreen = ({ navigation }) => {
-  const { userData } = React.useContext(AuthContext);
-  const server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
+  const { userData, account,updateBalance} = React.useContext(AuthContext);
 
   const theme = useTheme();
   const refRBSheet = useRef();
@@ -42,10 +44,14 @@ const HomeScreen = ({ navigation }) => {
   const [state, setState] = useState([]);
 
   useEffect(() => {
-    get_account(userData.publicKey)
-    get_categories()
+   load_account()
   }, []);
 
+ 
+  const load_account=()=>{
+    get_account()
+    get_categories()
+  }
   const get_categories = async () => {
     setRefresh(true);
     try {
@@ -59,14 +65,23 @@ const HomeScreen = ({ navigation }) => {
         console.error(error);
      }
 };
+ 
+const get_account = async () => {
+  setRefresh(true);
+  try {
+      const response = await fetch(utils.HORIZON+'/accounts/'+userData.public_key);
+      const json = await response.json();
+      console.log(json)
+      updateBalance(json)
+  } catch (error) {
+      console.error(error);
+   }
+};
 
-function get_account(accountId) {
-	server.accounts().accountId(accountId).call().then(function(accountResult) {
-		console.log(accountResult);
-	}).catch(function(err) {
-		console.error(err);
-	});
-}
+
+
+
+ 
 
   const getFeed = async () => {
 
@@ -178,7 +193,7 @@ function get_account(accountId) {
  refreshControl={
   <RefreshControl
     refreshing={isRefreshing}
-    onRefresh={() => getFeed()}
+    onRefresh={() => load_account()}
   />
 }
             data={data}

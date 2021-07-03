@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Alert } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
@@ -35,7 +35,7 @@ import BookmarkScreen from './screens/BookmarkScreen';
 import { AuthContext } from './components/context';
 
 import RootStackScreen from './screens/RootStackScreen';
-
+import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Drawer = createDrawerNavigator();
@@ -46,6 +46,7 @@ const App = () => {
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userData, setData] = useState([]);
+  const [account, setAccount] = useState([]);
 
 
 
@@ -168,7 +169,11 @@ const App = () => {
 
 
   const authContext = {
-    userData:userData,
+    account: account,
+    userData: userData,
+    updateBalance: async (account) => {
+      setAccount(account)
+    },
     signIn: async (data) => {
 
       try {
@@ -190,7 +195,7 @@ const App = () => {
     signUp: async (data) => {
       try {
         console.log(data)
- 
+
         await AsyncStorage.setItem('data', data);
         data = JSON.parse(data)
         setUpdates(data);
@@ -207,7 +212,30 @@ const App = () => {
     }
   }
 
+  get_token = async () => {
+    try {
+      await messaging().registerDeviceForRemoteMessages();
+
+      const token = await messaging().getToken();
+      console.log(token)
+
+      await AsyncStorage.setItem('fcm', token);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
+    get_token();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    console.log("...............................")
+
+
+
+
     setTimeout(async () => {
       // setIsLoading(false);
 
@@ -219,8 +247,8 @@ const App = () => {
         data = JSON.parse(data)
         userToken = data.user_id
         console.log()
-         
-         setData(data) 
+
+        setData(data)
         dispatch({ type: 'RETRIEVE_TOKEN', id: data.user_id, username: data.username, token: userToken });
         return;
       } catch (e) {
@@ -229,6 +257,10 @@ const App = () => {
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
 
     }, 1000);
+
+    return unsubscribe;
+
+
   }, []);
 
   const click = async () => {
@@ -236,7 +268,7 @@ const App = () => {
     console.log(currentState);
   };
 
-  const  setUpdates =  (data) => {
+  const setUpdates = (data) => {
     setData(data)
   }
 
@@ -254,7 +286,7 @@ const App = () => {
       <PaperProvider theme={theme}>
         <AuthContext.Provider value={authContext}>
           <NavigationContainer theme={theme}>
-            {loginState.userToken !== null  ? (
+            {loginState.userToken !== null ? (
               <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
                 <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
                 <Drawer.Screen name="SupportScreen" component={SupportScreen} />

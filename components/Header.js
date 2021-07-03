@@ -12,8 +12,9 @@ import {
     Menu,    MenuOptions,    MenuOption,    text,    MenuTrigger,
   } from 'react-native-popup-menu';
 
-const Header = ({ navigation, onPress }) => {
+const Header = ({ navigation, onPress,balance }) => {
     const { colors } = useTheme();
+  
 
     return (
 
@@ -26,12 +27,12 @@ const Header = ({ navigation, onPress }) => {
         <MenuTrigger style={styles.container} >
         
                     <Avatar.Image size={24} source={require('../assets/token.png')} />
-                    <Text style={styles.Text}> 120K </Text>
+                    <Text style={styles.Text}> {balance} </Text>
                
             
         </MenuTrigger>
         <MenuOptions>
-        <MenuOption  onSelect={() => alert(`Save`)}  >
+        <MenuOption  onSelect={() => navigation.navigate('Wallet')}  >
             <View style={styles.menuOption}>
             <Icon  name="wallet"   size={20}/> 
             <Text> My Wallet</Text>
@@ -41,23 +42,18 @@ const Header = ({ navigation, onPress }) => {
          <MenuOption  onSelect={() => alert(`Save`)}  >
             <View style={styles.menuOption}>
             <Icon  name="wallet"   size={20}/> 
-            <Text> Earn SIA</Text>
+            <Text> Get SIA</Text>
             </View>
          </MenuOption>
 
          <MenuOption  onSelect={() => alert(`Save`)}  >
             <View style={styles.menuOption}>
             <Icon  name="wallet"   size={20}/> 
-            <Text> Watch Ads</Text>
+            <Text> BackUp Wallet</Text>
             </View>
          </MenuOption>
 
-         <MenuOption  onSelect={() => alert(`Save`)}  >
-            <View style={styles.menuOptionLast}>
-            <Icon  name="wallet"   size={20}/> 
-            <Text> Buy SIA</Text>
-            </View>
-         </MenuOption>
+       
 
         </MenuOptions>
       </Menu>
