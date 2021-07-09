@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,13 +13,16 @@ import ProfileScreen from './ProfileScreen';
 
 import { useTheme } from 'react-native-paper';
 import { View } from 'react-native-animatable';
-import NotificationScreen from './NotificationScreen';
+import PlayRequests from './PlayRequests';
 import TopicItemDetail from './TopicItemDetail';
 import CreatePublicTopic from './CreatePublicTopic';
 import contactScreen from './contactScreen';
 import Wallet from './Wallet';
 import WalletReceive from './WalletReceive';
 import WalletTransfer from './WalletTransfer';
+import PlayEarn from './PlayEarn';
+import TopicsApproval from './TopicsApproval';
+import WalletStatement from './WalletStatement';
 
 const TopicStack = createStackNavigator();
 const mainStack = createStackNavigator();
@@ -32,11 +35,16 @@ import { AuthContext } from '../components/context';
 
 
 const MainTabScreen = ({ navigation }) => {
-  const { userData, account,updateBalance} = React.useContext(AuthContext);
+  const { userData, Requests,account,updateBalance} = React.useContext(AuthContext);
 
   const { colors } = useTheme();
 
-    
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  
+  
 
   const getBalance = (account, currency) => {
     try{
@@ -49,6 +57,7 @@ const MainTabScreen = ({ navigation }) => {
         }
         return balance;
       }catch(err) {
+        return "0"
       }
      
 
@@ -70,7 +79,7 @@ const MainTabScreen = ({ navigation }) => {
         </View>
       ),
       headerRight: () => (
-        <Header navigation={navigation} balance={getBalance(account,"SIA")} />
+        <Header navigation={navigation} balance={numberWithCommas(getBalance(account,"SIA"))} />
       ),
     }} component={HomeTabs} />
 
@@ -114,8 +123,37 @@ const MainTabScreen = ({ navigation }) => {
       })}
     />
 
-    
+<TopicStack.Screen
+      name="WalletStatement"
+      component={WalletStatement}
+      options={() => ({
+        title: "Account Operations ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
 
+    
+ <TopicStack.Screen
+      name="PlayEarn"
+      component={PlayEarn}
+      options={() => ({
+        title: "BackUp Wallet ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+    <TopicStack.Screen
+      name="TopicsApproval"
+      component={TopicsApproval}
+      options={() => ({
+        title: "Admin Topics ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+
+ 
 <TopicStack.Screen
       name="contactScreen"
       component={contactScreen}
@@ -142,6 +180,8 @@ const MainTabScreen = ({ navigation }) => {
 export default MainTabScreen;
 const HomeTabs = () => {
   const { colors } = useTheme();
+  const { userData, Requests,account,updateBalance} = React.useContext(AuthContext);
+  const v = 0
 
   return (<Tab.Navigator initialRouteName="Home"
     activeColor="#26AC79"
@@ -180,18 +220,31 @@ const HomeTabs = () => {
         ),
       }}
     />
-    <Tab.Screen
-      name="Notifications"
-      component={NotificationScreen}
+    {Requests>0?<Tab.Screen
+      name="PlayRequests"
+      component={PlayRequests}
       options={{
-        tabBarLabel: 'Notifications',
-        tabBarBadge: 2,
+        tabBarLabel: 'Play Requests',
+        tabBarBadge: Requests,
+        tabBarIcon: ({ color }) => (
+          <Icon name="ios-notifications" color={color} size={26} />
+        ),
+      }}
+
+    />:
+      <Tab.Screen
+      name="PlayRequests"
+      component={PlayRequests}
+      options={{
+        tabBarLabel: 'Play Requests',
         tabBarIcon: ({ color }) => (
           <Icon name="ios-notifications" color={color} size={26} />
         ),
       }}
 
     />
+    }
+
     <Tab.Screen
       name="Profile"
       component={ProfileScreen}

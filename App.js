@@ -35,8 +35,9 @@ import BookmarkScreen from './screens/BookmarkScreen';
 import { AuthContext } from './components/context';
 
 import RootStackScreen from './screens/RootStackScreen';
-import messaging from '@react-native-firebase/messaging';
+import messaging, { firebase } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
+import utils from './model/utils';
 
 const Drawer = createDrawerNavigator();
 
@@ -47,8 +48,10 @@ const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userData, setData] = useState([]);
   const [account, setAccount] = useState([]);
+  const [isValidator, setIsValidator] = useState(false);
+  const [Requests, setRequests] = useState(0);
 
-
+  
 
   const initialLoginState = {
     isLoading: false,
@@ -113,6 +116,22 @@ const App = () => {
 
   const CustomDarkTheme = {
     fonts: configureFonts(fontConfig),
+    ...NavigationDefaultTheme,
+    ...PaperDefaultTheme,
+    colors: {
+      primary: '#6200ee',
+      ...NavigationDefaultTheme.colors,
+      ...PaperDefaultTheme.colors,
+      background: '#ffffff',
+      gray: '#808080',
+      accent: "#26AC79",
+      text: '#333333'
+    }
+  }
+
+
+  const CustomDarkThemeOld = {
+    fonts: configureFonts(fontConfig),
     ...NavigationDarkTheme,
     ...PaperDarkTheme,
     colors: {
@@ -171,8 +190,13 @@ const App = () => {
   const authContext = {
     account: account,
     userData: userData,
+    isValidator:isValidator,
+    Requests:Requests,
     updateBalance: async (account) => {
       setAccount(account)
+    },
+    setRequests: async (count) => {
+      setRequests(count)
     },
     signIn: async (data) => {
 
@@ -213,27 +237,76 @@ const App = () => {
   }
 
   get_token = async () => {
+
     try {
+
+      data = await AsyncStorage.getItem('data');
+
+      data = JSON.parse(data)
+      userToken = data.user_id
+
       await messaging().registerDeviceForRemoteMessages();
 
       const token = await messaging().getToken();
       console.log(token)
 
       await AsyncStorage.setItem('fcm', token);
+      updateProfile(token,userToken)
     } catch (e) {
       console.log(e);
     }
   }
 
+
+
+
+  const updateProfile = async (fcm,userToken) => {
+    console.log(".........................")
+
+    console.log(userToken)
+    console.log(".........................")
+
+    const requestOption = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': userData.jwt },
+      body: JSON.stringify({
+        "user_id": userToken,
+        "fcm": fcm
+      })
+    };
+ 
+    try {
+
+      const response = await fetch(utils.ENDPONT + 'user/update_profile', requestOption);
+      const json = await response.json();
+      console.log(json)
+
+      var status = json.status
+      if(status == 100){
+        const isValidator = json.data.isValidator
+        if(isValidator){
+          setIsValidator(true)
+        }else{
+          setIsValidator(false) 
+        } 
+      }
+
+
+     
+    } catch (error) {
+      console.error(error);
+     }
+
+  };
+
   useEffect(() => {
     get_token();
-
+ 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
-    console.log("...............................")
+      //Alert.alert('A new topic created', JSON.stringify(remoteMessage));
+      Alert.alert('A new topic created', "A ne topic has been created");
 
-
+      });
 
 
     setTimeout(async () => {

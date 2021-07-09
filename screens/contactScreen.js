@@ -56,7 +56,7 @@ const contactScreen = ({route, navigation}) => {
       headers: { 'Content-Type': 'application/json' },
     };
     try {
-      const response = await fetch(utils.ENDPONT + 'user/search_users?q='+query);
+      const response = await fetch(utils.ENDPONT + 'user/search_users/'+userData.user_id+'?q='+query);
       const json = await response.json();
       console.log(json);
       setData(json);

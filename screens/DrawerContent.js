@@ -23,7 +23,7 @@ export function DrawerContent(props) {
 
     const paperTheme = useTheme();
 
-    const { signOut, toggleTheme,userData } = React.useContext(AuthContext);
+    const { signOut, toggleTheme,isValidator,userData } = React.useContext(AuthContext);
 
     
     return (
@@ -71,50 +71,21 @@ export function DrawerContent(props) {
                             label="Profile"
                             onPress={() => { props.navigation.navigate('Profile') }}
                         />
-                        <DrawerItem
+                        {isValidator?<DrawerItem
                             icon={({ color, size }) => (
                                 <Icon
-                                    name="bookmark-outline"
+                                    name="square-edit-outline"
                                     color={color}
                                     size={size}
                                 />
                             )}
-                            label="Bookmarks"
-                            onPress={() => { props.navigation.navigate('BookmarkScreen') }}
-                        />
-                        <DrawerItem
-                            icon={({ color, size }) => (
-                                <Ionicons
-                                    name="ios-settings-outline"
-                                    color={color}
-                                    size={size}
-                                />
-                            )}
-                            label="Settings"
-                            onPress={() => { props.navigation.navigate('SettingScreen') }}
-                        />
-                        <DrawerItem
-                            icon={({ color, size }) => (
-                                <Icon
-                                    name="account-check-outline"
-                                    color={color}
-                                    size={size}
-                                />
-                            )}
-                            label="Support"
-                            onPress={() => { props.navigation.navigate('SupportScreen') }}
-                        />
+                            label="Update Games"
+                            onPress={() => { props.navigation.navigate('TopicsApproval') }}
+                        />:<View></View>}
+
+                     
                     </Drawer.Section>
-                    <Drawer.Section title="Preferences">
-                        <TouchableRipple onPress={() => { toggleTheme() }}>
-                            <View style={styles.preference}>
-                                <Text>Dark Theme</Text>
-                                <View pointerEvents="none">
-                                    <Switch value={paperTheme.dark} />
-                                </View>
-                            </View>
-                        </TouchableRipple>
-                    </Drawer.Section>
+                  
                 </View>
             </DrawerContentScrollView>
             <Drawer.Section style={styles.bottomDrawerSection}>

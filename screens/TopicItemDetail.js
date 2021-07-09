@@ -150,7 +150,7 @@ const updateData = data => {
               <View style={{ marginTop: 10, marginBottom: 10 }} >
                 {playerChoice=="p2p"?<Card itemData={userData} showButton={false}/>:<View></View>}
                 <Text style={styles.title}>You are playing {opponetUsername}  for {selectedAmount} SIA</Text>
-                <PlayButton  onPressed={() => refRBSheet.current.open()}  headerText="Play" subHeader="Possible return 2K SIA" />
+                <PlayButton  onPressed={() => refRBSheet.current.open()}  headerText="Play" subHeader="Play for a possible return of x2" />
 
 
               </View>}

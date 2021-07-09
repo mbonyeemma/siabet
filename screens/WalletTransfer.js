@@ -3,23 +3,29 @@ import {
     Text,
     TouchableOpacity,
     View, Image,
-    TextInput,
+
     StyleSheet, Platform, ScrollView, Alert
 } from 'react-native';
 
-import { useTheme } from 'react-native-paper';
+import { useTheme, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Note from '../components/Note.js'
 import PlayButton from '../components/PlayButton.js'
 import calender from '../assets/calender.png'
 import DropDownPicker from 'react-native-dropdown-picker';
 import utils from '../model/utils'
-import { Root, Popup, Toast } from 'popup-ui'
 import { AuthContext } from '../components/context';
+import SubmitButton from '../components/SubmitButton'
+import SendBottomPopUp from '../components/SendBottomPopUp'
+
+import RBSheet from "react-native-raw-bottom-sheet";
+
 
 
 const WalletTransfer = () => {
-    const { userData } = React.useContext(AuthContext);
+    const refRBSheet = useRef();
+
+    const { userData,account } = React.useContext(AuthContext);
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
@@ -32,50 +38,42 @@ const WalletTransfer = () => {
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [dateTime, setTimeStamp] = useState('');
-    const [league, setLeague] = React.useState('');
-    const [question, setQuestion] = React.useState('');
+
+    const [receiver, setReceiver] = React.useState('');
+    const [memo, setMeMo] = React.useState('');
+    const [amount, setAmount] = React.useState('');
+    const [issuer, setIssuer] = React.useState('');
+    const tokens = [
+        {label:"XLM",value:"XLM"},
+        {label:"SIA",value:"SIA"},
+    ]
+    const [data, setData] = React.useState(tokens);
 
     const ref_input2 = useRef();
     const ref_input3 = useRef();
 
-    const submitData = async () => {
-        if (value == "" || league == "" || question == "") {
-            return Alert.alert("Error", "please fill all the fields");
-        }
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': userData.jwt },
-            body: JSON.stringify({
-                "user_id": userData.user_id,
-                "topic_title": league,
-                "topic_type_id": "2",
-                "topic_question": question,
-                "topic_start_date": "2021-06-29 15:00:50",
-                "topic_category_id": value
-            })
-        };
-        setSending(true)
+
+    useEffect(() => {
+        setItems(tokens)
+    }, []);
+
+
+    const get_issuer = (asset_code) => {
+        console.log(account)
         try {
-            const response = await fetch(utils.ENDPONT + 'bet/create_topic', requestOptions);
-            const json = await response.json();
-            setSending(false);
+           var issuer = account.balances.find((b) => b.asset_code == asset_code).asset_issuer;
+            console.log(issuer)
+            setIssuer(issuer)
 
-            console.log(json);
-            const status = json.status
-            const message = json.message
-            if (status == 100) {
-                Alert.alert("success", message)
-            } else {
-                Alert.alert("failed", message)
+            return issuer;
+        } catch (e) {
+            console.log(e)
 
-            }
-
-        } catch (error) {
-            console.error(error);
-            setSending(false);
+            return "";
         }
     };
 
+ 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios');
@@ -123,94 +121,92 @@ const WalletTransfer = () => {
             ),
         })
     }
+    
 
 
     return (
         <ScrollView style={{ backgroundColor: '#F1F1F1' }}>
             <View style={styles.container}>
-                <View style={styles.cardInfo}>
+                <View style={styles.cardInfod}>
 
 
 
 
 
 
+                    <TextInput
+                        mode="outlined"
+                        autoCapitalize={"characters"}
+                        label="Receiver Public Key"
+                        placeholder="eg, GB4LHBRH53L..."
+                        onSubmitEditing={() => ref_input2.current.focus()}
+                        blurOnSubmit={false}
+                        returnKeyType="next"
+                        onChangeText={text => setReceiver(text)}
 
-                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Receiver Address</Text>
-                    <View style={styles.action}>
-                        <TextInput
-                            placeholder="eg, GB4LHBRH53LPXIVUEEBA2DA3S36HWU4VJGZ4CVYERFVA4ZAG47IX4SGW"
-                            onSubmitEditing={() => ref_input2.current.focus()}
-                            blurOnSubmit={false}
-                            returnKeyType="next"
-                            onChangeText={text => setLeague(text)}
-                            style={[
-                                styles.textInput,
-                                {
-                                    color: colors.text,
-                                },
-                            ]}
-                        />
+                    />
+
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> </Text>
+
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <View style={{ flex: 2 }}>
+
+                            <TextInput
+                                label="Enter amount"
+                                mode="outlined"
+                                keyboardType='numeric'
+                                ref={ref_input2}
+                                onSubmitEditing={() => ref_input3.current.focus()}
+                                returnKeyType="next"
+                                onChangeText={text => setAmount(text)}
+                            />
+                        </View>
+
+                        <View style={{ flex: 1, marginTop: 6, marginLeft: 10, alignItems: 'center', alignSelf: 'center' }}>
+
+                            <DropDownPicker
+                                style={{ height: 57, }}
+                                loading={loading}
+                                disableBorderRadius={true}
+                                open={open}
+                                placeholder="..."
+                                value={value}
+                                items={items}
+                                setOpen={setOpen}
+                                setValue={setValue}
+                                setItems={setItems}
+                                listMode="MODAL"
+ 
+
+                            />
+                        </View>
                     </View>
 
-                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}> Enter amount</Text>
+                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}></Text>
+                    <TextInput
+                        label="Memo"
+                        mode="outlined"
+                        ref={ref_input3}
+                        onChangeText={text => setMeMo(text)}
+
+                    />
+
+                    <RBSheet
+                        ref={refRBSheet}
+                        closeOnDragDown={true}
+                        height={400}
+                    >
+            <SendBottomPopUp amount={amount} asset={value} assetIssuer={issuer} receiver={receiver} memo={memo} />
+
+                    </RBSheet>
+
+                    <View style={{ marginTop: 20 }}>
 
 
-                    <View style={{ flex: 1,   flexDirection: 'row' }}>
+                        <SubmitButton isLoading={isSending} onPressed={() => {get_issuer(value); refRBSheet.current.open()}} text="Next" />
 
-                        <View style={{ flex: 2,borderColor:'#000',borderLeftWidth:1,borderTopWidth:1,borderBottomWidth:1 }}>
-
-                       
-
-                        <TextInput
-                            placeholder="Amount"
-                            ref={ref_input2}
-                            onChangeText={text => setQuestion(text)}
-                            style={{ color: colors.text, flex: 1, width: '60%' }}
-                        />
-                         </View>
-                         <View style={{ flex: 1 }}>
-
-
-                        <DropDownPicker
-                            loading={loading}
-                            disableBorderRadius={true}
-                            open={open} 
-                            placeholder="..."
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            listMode="MODAL"
-                          
-                        />
-                         </View>
                     </View>
-
-                    <Text style={[styles.text_footer, { color: colors.gray, marginTop: 8 }]}>Memo</Text>
-                    <View style={styles.action}>
-                        <TextInput
-                            placeholder="MeMo"
-                            onSubmitEditing={() => ref_input2.current.focus()}
-                            blurOnSubmit={false}
-                            returnKeyType="next"
-                            onChangeText={text => setLeague(text)}
-                            style={[
-                                styles.textInput,
-                                {
-                                    color: colors.text,
-                                },
-                            ]}
-                        />
-                    </View>
-
-
-
-
-
-
-                    <PlayButton isLoading={isSending} onPressed={submitData} headerText="Send" />
 
                 </View>
             </View>

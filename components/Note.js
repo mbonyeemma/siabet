@@ -4,9 +4,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import StarRating from './StarRating';
 
-const Note = ({ text }) => {
+const Note = ({ text ,onPress}) => {
     return (
-        <TouchableOpacity >
+        <TouchableOpacity onPress={onPress} >
             <View style={styles.card}>
                 <View style={styles.cardInfo}>
 

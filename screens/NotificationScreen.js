@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,30 @@ const NotificationScreen = ({navigation}) => {
       details: NotificationItem.details,
     })),
   );
+
+  useEffect(() => {
+    //get_user_bets();
+  }, []);
+
+
+  const get_user_bets = async () => {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+    try {
+      const response = await fetch(utils.ENDPONT + 'bet/get_requests/'+userData.user_id);
+      const json = await response.json();
+      console.log(json);
+      setData(json);
+      setRefresh(false);
+    } catch (error) {
+      console.error(error);
+      setRefresh(false);
+    }
+  };
+
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {

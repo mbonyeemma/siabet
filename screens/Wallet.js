@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, RefreshControl, TouchableOpacity,FlatList, StyleSheet } from 'react-native';
+import { View, SafeAreaView, RefreshControl, TouchableOpacity, Linking, StyleSheet, Alert } from 'react-native';
 import {
   Avatar,
   Title,
@@ -16,8 +16,11 @@ import Card from '../components/Card';
 import files from '../assets/filesBase64';
 import utils from '../model/utils';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Wallet = ({navigation}) => {
+import Note from '../components/Note'
+
+const Wallet = ({ navigation }) => {
   const { userData, account } = React.useContext(AuthContext);
 
   const [following, setFollowing] = useState(0);
@@ -30,7 +33,7 @@ const Wallet = ({navigation}) => {
 
 
   useEffect(() => {
-    get_profile();
+
   }, []);
 
   const get_profile = async () => {
@@ -51,6 +54,10 @@ const Wallet = ({navigation}) => {
       console.error(error);
     }
   };
+
+const openLink = ()=>{
+  Linking.openURL("https://siabet.org/about/")
+}
 
   const get_user_bets = async () => {
 
@@ -94,64 +101,75 @@ const Wallet = ({navigation}) => {
       />
     );
   };
-  const goto =() =>{
+  const goto = () => {
     navigation.navigate('WalletReceive')
   }
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
 
       <View style={styles.userInfoSection}>
-
-
-
-
         <View style={styles.section}>
-          <Text style={styles.captiontext}>{getBalance(account, "SIA")} SIA</Text>
+          <View style={{flexDirection:'row'}}>
+          <Text style={{marginTop:10,fontWeight:'bold'}}>SIA</Text>
+          <Text style={styles.captiontext}>{numberWithCommas(getBalance(account, "SIA"))} </Text>
+
+          </View>
+          <Text style={{color:'#26AC79',textAlign:'center'}}> Wallet Balance</Text>
+
         </View>
 
 
       </View>
 
+<View style={{flex:1,backgroundColor:'#FFF', padding:16}}>
 
 
       <View style={styles.infoBoxWrapper}>
 
-        <TouchableOpacity onPress={goto} style={styles.sectionBox}>
+        <TouchableOpacity onPress={goto} style={styles.sectionBoxLeft}>
           <View>
-            <FontAwesome5 color="#26AC79" style={{ alignSelf: 'center' }} name="arrow-down" size={24} />
+            <FontAwesome5 color="#26AC79" style={{ alignSelf: 'center' }} name="arrow-down" size={26} />
 
             <Caption style={styles.caption}>Receive</Caption>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=> navigation.navigate('WalletTransfer')} style={styles.sectionBox}>
-          <FontAwesome5 color="red" style={{ alignSelf: 'center' }} name="arrow-up" size={24} />
+        <TouchableOpacity onPress={() => navigation.navigate('WalletTransfer')} style={styles.sectionBoxRight}>
+          <FontAwesome5 color="red" style={{ alignSelf: 'center' }} name="arrow-up" size={26} />
           <Caption style={styles.caption}>Send</Caption>
         </TouchableOpacity>
 
-        <View style={styles.sectionBox}>
-          <FontAwesome5 color="blue" style={{ alignSelf: 'center' }} name="exchange-alt" size={24} />
-          <Caption style={styles.caption}>Exchange</Caption>
-        </View>
 
       </View>
 
-      <View style={{ flex: 1, marginTop: 20, padding: 16, backgroundColor: '#FFF' }} >
-        <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={() => get_profile()}
-            />}
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={item => item.bt_id}
-        />
+      <View style={styles.infoBoxWrapper}>
+
+        <TouchableOpacity   onPress={()=>Linking.openURL("https://stellarterm.com/exchange/SIA-GCHV4EUCZ3T45WXLK573GFNBPRBQPFX654J4J6232P6TRZMBMEJPFYW2/XLM-native")}   style={styles.sectionBoxLeft}>
+          <View>
+            <AntDesign color="blue" style={{ alignSelf: 'center' }} name="eye" size={26} />
+
+            <Caption style={styles.caption}>View on stellarterm</Caption>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('PlayEarn')} style={styles.sectionBoxRight}>
+          <MaterialIcons color="black" style={{ alignSelf: 'center' }} name="backup" size={26} />
+          <Caption style={styles.caption}>Backup Wallet</Caption>
+        </TouchableOpacity>
+
+
+      </View>
+      <View style={{ flex: 2 }}>
+        <Note onPress={()=>Linking.openURL("https://siabet.org/about/")} text="What is SIA and how can I get it? Tap to read more about SIA and the stellar blockchain." />
       </View>
 
 
-
+      </View>
 
     </SafeAreaView>
   );
@@ -164,10 +182,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F1F1F1',
   },
-  sectionBox: {
+  sectionBoxLeft: {
     flex: 1,
-    marginLeft: 16,
-    marginRight: 16,
+    height: '70%',
+    marginRight: 10,
     backgroundColor: '#FFF',
     borderRadius: 8,
     textAlign: 'center',
@@ -177,8 +195,20 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     padding: 10,
-
-
+  },
+  sectionBoxRight: {
+    flex: 1,
+    height: '70%',
+    marginLeft: 10,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    textAlign: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    borderColor: 'gray',
+    elevation: 5,
+    alignSelf: 'center',
+    padding: 10,
   },
   section: {
     margin: 16,
@@ -186,7 +216,7 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 50,
   },
   title: {
     fontSize: 24,
@@ -218,11 +248,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   infoBoxWrapper: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   infoBox: {
-    width: '50%',
     alignItems: 'center',
     justifyContent: 'center',
   },

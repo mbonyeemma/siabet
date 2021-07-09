@@ -18,7 +18,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import StarRating from '../components/StarRating';
-import BottomSheetUI from '../components/BottomSheetUI';
+import SuccessModal from '../components/successModal'
+import ModalTester from '../components/Modal'
 import { color } from "react-native-reanimated";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import  utils from '../model/utils'
@@ -34,7 +35,7 @@ import { AuthContext } from '../components/context';
 
 
 const HomeScreen = ({ navigation }) => {
-  const { userData, account,updateBalance} = React.useContext(AuthContext);
+  const { userData, setRequests,account,updateBalance} = React.useContext(AuthContext);
 
   const theme = useTheme();
   const refRBSheet = useRef();
@@ -44,7 +45,16 @@ const HomeScreen = ({ navigation }) => {
   const [state, setState] = useState([]);
 
   useEffect(() => {
-   load_account()
+
+    const unsubscribe = navigation.addListener('focus', () => {
+      load_account()
+    });
+
+    return () => {
+      unsubscribe;
+    };
+
+
   }, []);
 
  
@@ -67,6 +77,9 @@ const HomeScreen = ({ navigation }) => {
 };
  
 const get_account = async () => {
+
+ 
+
   setRefresh(true);
   try {
       const response = await fetch(utils.HORIZON+'/accounts/'+userData.public_key);
@@ -96,11 +109,29 @@ const get_account = async () => {
       console.log(json);
       setData(json);
       setRefresh(false);
+      get_user_bets()
     } catch (error) {
       console.error(error);
       setRefresh(false);
     }
   };
+
+  const get_user_bets = async () => {
+
+    try {
+      const response = await fetch(utils.ENDPONT + 'bet/get_requests/'+userData.user_id);
+      const json = await response.json();
+      console.log(json)
+      console.log(json.length)
+
+      setRequests(json.length)
+       
+    } catch (error) {
+      console.error(error);
+      setRefresh(false);
+    }
+  };
+
 
   const refreshControl = () => {
     return (

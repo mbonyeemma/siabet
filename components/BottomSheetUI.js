@@ -22,8 +22,11 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
     } else {
       userChoice = "Yes"
     }
+  }else{
+    amount = amount.replace("K", "000");
+
   }
-     amount = amount+"".replace("K", "000");
+
 
   const submitBet = async () => {
 
@@ -67,9 +70,7 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
     }
 
   };
-  const getString = () => {
-    return "Play for a return of " + $itemData.stake_amount * 2
-  }
+ 
 
   return (
     <View style={styles.panel}>

@@ -32,7 +32,7 @@ const createTopicScreen = ({ navigation }) => {
 
             <View style={{ flex: 8 }}>
               <Text style={styles.cardTitle}>Suggest a public topic</Text>
-              <Text style={styles.cardDetails}>Suggest a topic and stand a chance to win 1K SIA tokens. This suggestion will go under review and if approved, you will be awared with 1K SIA</Text>
+              <Text style={styles.cardDetails}>Suggest a topic and stand a chance to win 500 SIA tokens. This suggestion will go under review and if approved, you will be awared with 500 SIA</Text>
             </View>
             <View style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}>
               <Icon name="arrow-forward-circle" color="#FFF" size={26} />
