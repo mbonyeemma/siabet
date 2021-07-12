@@ -5,7 +5,7 @@ import {
   Text, Dimensions,
   RefreshControl,
   Image,
-  StyleSheet,
+  StyleSheet,Alert,
   StatusBar,
   TouchableOpacity, Button,
   ScrollView, FlatList
@@ -69,13 +69,19 @@ const HomeScreen = ({ navigation }) => {
         const json = await response.json();
         console.log(json)
         setState(json);
-        getFeed();
+        getFeed(selectedCategory);
 
     } catch (error) {
         console.error(error);
      }
 };
  
+ 
+
+
+
+
+
 const get_account = async () => {
 
  
@@ -96,7 +102,7 @@ const get_account = async () => {
 
  
 
-  const getFeed = async () => {
+  const getFeed = async (state) => {
 
     const requestOptions = {
       method: 'GET',
@@ -104,7 +110,7 @@ const get_account = async () => {
     };
     setRefresh(true)
     try {
-      const response = await fetch(utils.ENDPONT + 'bet/topics_feed/' + userData.user_id + '?q=' + selectedCategory, requestOptions);
+      const response = await fetch(utils.ENDPONT + 'bet/topics_feed/' + userData.user_id + '?q=' + state, requestOptions);
       const json = await response.json();
       console.log(json);
       setData(json);
@@ -143,12 +149,42 @@ const get_account = async () => {
   }
 
 
+  const make_favorite = async (item) => {
+
+
+    const requestOption = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': userData.jwt },
+        body: JSON.stringify({
+            "user_id": userData.user_id,
+            "category_name": item,
+        })
+    };
+    console.log(requestOption)
+    setRefresh(true);
+  
+  
+  
+    try {
+  
+        const response = await fetch(utils.ENDPONT + 'user/update_favorite', requestOption);
+        const json = await response.json();
+        console.log(json)
+        getFeed()
+    
+    } catch (error) {
+        console.error(error);
+        setRefresh(false);
+    }
+  
+  };
+
   const renderCategories = ({ item }) => {
     return (
       <View>
         <View style={{ flexDirection: "row", flex: 1, alignContent: 'center', marginRight: 8, marginLeft: 8 }}>
           <Text style={{ color: 'black', fontSize: 16, fontWeight: "bold", textAlign: 'center', alignSelf: "center" }}>{item.category_name}</Text>
-          <TouchableOpacity style={{ marginLeft: 20, textAlign: 'center', alignSelf: "center" }}>
+          <TouchableOpacity onPress={()=>make_favorite(item.category_id)} style={{ marginLeft: 20, textAlign: 'center', alignSelf: "center" }}>
             <Ionicons color="#26AC79" name={item.isFavorite?"star":"star-outline"} size={24} />
           </TouchableOpacity>
 
@@ -175,7 +211,7 @@ const get_account = async () => {
 
   const changeCategory = (newState) => {
     setCategory(newState);
-    getFeed()
+    getFeed(newState)
   };
 
 

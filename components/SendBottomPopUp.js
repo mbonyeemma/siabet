@@ -9,7 +9,7 @@ import fail from '../assets/fail.png'
 import { AuthContext } from '../components/context';
 
 
-const SendBottomPopUp = ({ amount, asset, assetIssuer, receiver, memo }) => {
+const SendBottomPopUp = ({refRBSheet, amount, asset, assetIssuer, receiver, memo }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isComplete, setComplete] = useState("");
     const { userData } = React.useContext(AuthContext);
@@ -45,6 +45,8 @@ const SendBottomPopUp = ({ amount, asset, assetIssuer, receiver, memo }) => {
             setIsLoading(false);
             const status = json.status;
             const message = json.message;
+            refRBSheet.current.close()
+
             if (status == 100) {
                 Alert.alert("success", message);
             } else {

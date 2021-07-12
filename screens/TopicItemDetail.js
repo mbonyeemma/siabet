@@ -162,7 +162,7 @@ const updateData = data => {
             closeOnDragDown={true}
             height={320}
           >
-            <BottomSheetUI Opponent={opponentId} OpponentBetId="" isMatchingBet={false} itemData={itemData} PlayerChoice={playerChoice} amount={selectedAmount} betChoice={betChoice} />
+            <BottomSheetUI refRBSheet={refRBSheet} Opponent={opponentId} OpponentBetId="" isMatchingBet={false} itemData={itemData} PlayerChoice={playerChoice} amount={selectedAmount} betChoice={betChoice} />
           </RBSheet>
             : <View></View>}
 

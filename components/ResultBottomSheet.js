@@ -9,7 +9,7 @@ import Note from './Note'
 import { AuthContext } from './context';
 
 
-const ResultBottomSheet = ({ itemData, GameStatus }) => {
+const ResultBottomSheet = ({refRBSheet, itemData, GameStatus }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [betChoice, setChoice] = useState(false);
 
@@ -44,6 +44,8 @@ const ResultBottomSheet = ({ itemData, GameStatus }) => {
             setIsLoading(false);
             const status = json.status;
             const message = json.message;
+            refRBSheet.current.close()
+
             if (status == 100) {
                 Alert.alert("success", message);
             } else {

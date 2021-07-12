@@ -37,22 +37,19 @@ const SignInScreen = ({ navigation }) => {
     const [loading, setIsLoading] = React.useState(false)
     const { colors } = useTheme();
 
-    const { signIn } = React.useContext(AuthContext);
 
     const textInputChange = (val) => {
-        if (val.trim().length >= 4) {
+        if (val.length !== 0) {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: true,
-                isValidUser: true
+                check_textInputChange: true
             });
         } else {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: false,
-                isValidUser: false
+                check_textInputChange: false
             });
         }
     }
@@ -130,6 +127,8 @@ const SignInScreen = ({ navigation }) => {
         } catch (error) {
             console.error(error);
             setIsLoading(false);
+            Alert.alert("Failed", "connection error");
+
         }
 
     };
@@ -164,7 +163,6 @@ const SignInScreen = ({ navigation }) => {
                         }]}
                         autoCapitalize="none"
                         onChangeText={(val) => textInputChange(val)}
-                        onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
                     />
                     {data.check_textInputChange ?
                         <Animatable.View
@@ -178,11 +176,7 @@ const SignInScreen = ({ navigation }) => {
                         </Animatable.View>
                         : null}
                 </View>
-                {data.isValidUser ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Username must be 4 characters long.</Text>
-                    </Animatable.View>
-                }
+                
 
 
                 <Text style={[styles.text_footer, {
@@ -223,14 +217,10 @@ const SignInScreen = ({ navigation }) => {
                         }
                     </TouchableOpacity>
                 </View>
-                {data.isValidPassword ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
-                    </Animatable.View>
-                }
+              
 
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("PasswordReset")}>
                     <Text style={{ color: '#26AC79', marginTop: 15 }}>Forgot password?</Text>
                 </TouchableOpacity>
 

@@ -25,7 +25,7 @@ const Header = ({ navigation, onPress, balance }) => {
             <Menu 
             opened={isOpen} >
                 <MenuTrigger  onPress={() => setOpen(true)} style={styles.container} >
-                    <Avatar.Image size={24} source={require('../assets/token.png')} />
+                    <Avatar.Image style={{backgroundColor: 'transparent'}} size={24} source={require('../assets/token.png')} />
                     <Text style={styles.Text}> {balance} </Text>
                 </MenuTrigger>
                 <MenuOptions>

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, Share, StyleSheet, ToastAndroid, Linking, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, SafeAreaView, Share, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import {
-    Caption, Text, Snackbar
+    Text, Snackbar
 } from 'react-native-paper';
 
 import { AuthContext } from '../components/context';
 
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import QRCode from 'react-native-qrcode-svg';
-import { block } from 'react-native-reanimated';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 const WalletReceive = (navigation) => {

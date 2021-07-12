@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, RefreshControl, TouchableOpacity, Linking, StyleSheet, Alert } from 'react-native';
+import { View, SafeAreaView, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import {
-  Avatar,
-  Title,
-  Caption, Paragraph,
-  Text,
-  TouchableRipple,
+  Caption, Text,
 } from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AuthContext } from '../components/context';
 
-import Share from 'react-native-share';
 import Card from '../components/Card';
-import files from '../assets/filesBase64';
 import utils from '../model/utils';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -86,8 +80,8 @@ const openLink = ()=>{
       } else {
         balance = Number.parseFloat(account.balances.find((b) => b.asset_code == currency).balance);
       }
-      return balance;
-    } catch (err) {
+      return Math.round(balance)
+        } catch (err) {
       return 0
     }
 

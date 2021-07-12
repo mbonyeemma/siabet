@@ -23,6 +23,8 @@ import WalletTransfer from './WalletTransfer';
 import PlayEarn from './PlayEarn';
 import TopicsApproval from './TopicsApproval';
 import WalletStatement from './WalletStatement';
+import LeaderBoard from './LeaderBoard';
+
 
 const TopicStack = createStackNavigator();
 const mainStack = createStackNavigator();
@@ -47,6 +49,7 @@ const MainTabScreen = ({ navigation }) => {
   
 
   const getBalance = (account, currency) => {
+
     try{
     
         let balance = 0;
@@ -55,7 +58,7 @@ const MainTabScreen = ({ navigation }) => {
         } else {
             balance = Number.parseFloat(account.balances.find((b) => b.asset_code == currency).balance);
         }
-        return balance;
+        return Math.round(balance)
       }catch(err) {
         return "0"
       }
@@ -143,6 +146,10 @@ const MainTabScreen = ({ navigation }) => {
         tabBarVisible: false,
       })}
     />
+
+
+
+    
     <TopicStack.Screen
       name="TopicsApproval"
       component={TopicsApproval}
@@ -236,7 +243,7 @@ const HomeTabs = () => {
       name="PlayRequests"
       component={PlayRequests}
       options={{
-        tabBarLabel: 'Play Requests',
+        tabBarLabel: 'Requests',
         tabBarIcon: ({ color }) => (
           <Icon name="ios-notifications" color={color} size={26} />
         ),
@@ -244,6 +251,19 @@ const HomeTabs = () => {
 
     />
     }
+
+<Tab.Screen
+      name="LeaderBoard"
+      component={LeaderBoard}
+      options={{
+        tabBarLabel: "Board",
+        tabBarIcon: ({ color }) => (
+          <MaterialIcon name="leaderboard" color={color} size={26} />
+        ),
+      }}
+    />
+
+
 
     <Tab.Screen
       name="Profile"

@@ -22,7 +22,7 @@ import SubmitButton from '../components/SubmitButton';
 import { AuthContext } from '../components/context';
 
 
-const SignInScreen = ({ navigation }) => {
+const SignUnScreen = ({ navigation }) => {
     const { signUp } = React.useContext(AuthContext);
 
     const [data, setData] = React.useState({
@@ -251,7 +251,7 @@ const SignInScreen = ({ navigation }) => {
     );
 };
 
-export default SignInScreen;
+export default SignUnScreen;
 
 const styles = StyleSheet.create({
     container: {

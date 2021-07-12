@@ -9,7 +9,7 @@ import fail from '../assets/fail.png'
 import { AuthContext } from '../components/context';
 
 
-const ApproveBottomSheet = ({ itemData, Option}) => {
+const ApproveBottomSheet = ({ refRBSheet, itemData, Option}) => {
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = React.useContext(AuthContext);
 
@@ -42,6 +42,8 @@ const ApproveBottomSheet = ({ itemData, Option}) => {
       setIsLoading(false);
       const status = json.status;
       const message = json.message;
+      refRBSheet.current.close()
+
       if (status == 100) {
         Alert.alert("success",message);
       } else {

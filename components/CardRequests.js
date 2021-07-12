@@ -1,11 +1,7 @@
 import React,{useRef} from 'react';
 import {View, Text,  StyleSheet, TouchableOpacity} from 'react-native';
-import { useTheme, Avatar, Divider } from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Button from './Button';
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -21,7 +17,7 @@ const CardRequests = ({itemData, onPress}) => {
         closeOnDragDown={true}
         height={320}
       >
-        <BottomSheetUI OpponentBetId={itemData.bet_id} Opponent={itemData.user_id} isMatchingBet={true} itemData={itemData}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
+        <BottomSheetUI refRBSheet={refRBSheet} OpponentBetId={itemData.bet_id} Opponent={itemData.user_id} isMatchingBet={true} itemData={itemData}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
       </RBSheet>
 
 

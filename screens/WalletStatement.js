@@ -4,23 +4,11 @@ import {
   View,
   Text, Dimensions,
   RefreshControl,
-  Image,
   StyleSheet,
-  StatusBar,
-  TouchableOpacity, Button,
-  ScrollView, FlatList
+  FlatList
 } from 'react-native';
-import RBSheet from "react-native-raw-bottom-sheet";
 import { useTheme } from '@react-navigation/native';
 import AccountItems from '../components/AccountItems';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import StarRating from '../components/StarRating';
-import BottomSheetUI from '../components/BottomSheetUI';
-import { color } from "react-native-reanimated";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import utils from '../model/utils'
 
 const { width, height } = Dimensions.get("window");
@@ -100,8 +88,7 @@ const WalletStatement = ({ navigation }) => {
 
 
 
-      <View style={styles.cardsWrapper}>
-          {data.length==0?<View><Text style={{fontSize:20,textAlign:"center"}}>No items found</Text></View>:
+           
         <FlatList
           refreshControl={
             <RefreshControl
@@ -112,11 +99,10 @@ const WalletStatement = ({ navigation }) => {
           data={data}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-        />}
+        />
 
 
 
-      </View>
     </View>
 
   );
@@ -127,6 +113,7 @@ export default WalletStatement;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding:16,
     backgroundColor: "#F1F1F1",
 
   },

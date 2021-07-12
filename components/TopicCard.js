@@ -162,9 +162,9 @@ const TopicCard = ({itemData, onPress}) => {
                 </View>}
           </View>
 
-          {itemData.bets_placed ||
+          {itemData.bets_placed  == 0 ||
             getRange (itemData.topic_start_date) < 0 ||
-            inPlay == 0
+            inPlay
             ? <View />
             : <View>
                 <Divider style={{marginTop: 10, marginBottom: 10}} />

@@ -130,8 +130,8 @@ const ApprovalCard = ({ itemData, onPress }) => {
                         closeOnDragDown={true}
                         height={350}
                     >
-                        {isResult?<ResultBottomSheet    GameStatus={finalStatus} itemData={itemData} />:
-                        <ApproveBottomSheet Option={Option} itemData={itemData} />}
+                        {isResult?<ResultBottomSheet refRBSheet={refRBSheet}   GameStatus={finalStatus} itemData={itemData} />:
+                        <ApproveBottomSheet refRBSheet={refRBSheet} Option={Option} itemData={itemData} />}
 
                     </RBSheet>
 

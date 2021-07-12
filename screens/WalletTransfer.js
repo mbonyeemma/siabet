@@ -1,19 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
     Text,
-    TouchableOpacity,
     View, Image,
 
-    StyleSheet, Platform, ScrollView, Alert
-} from 'react-native';
+    StyleSheet, Platform, ScrollView} from 'react-native';
 
 import { useTheme, TextInput } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Note from '../components/Note.js'
-import PlayButton from '../components/PlayButton.js'
-import calender from '../assets/calender.png'
 import DropDownPicker from 'react-native-dropdown-picker';
-import utils from '../model/utils'
 import { AuthContext } from '../components/context';
 import SubmitButton from '../components/SubmitButton'
 import SendBottomPopUp from '../components/SendBottomPopUp'
@@ -197,7 +190,7 @@ const WalletTransfer = () => {
                         closeOnDragDown={true}
                         height={400}
                     >
-            <SendBottomPopUp amount={amount} asset={value} assetIssuer={issuer} receiver={receiver} memo={memo} />
+            <SendBottomPopUp refRBSheet={refRBSheet} amount={amount} asset={value} assetIssuer={issuer} receiver={receiver} memo={memo} />
 
                     </RBSheet>
 

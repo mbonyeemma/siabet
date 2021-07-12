@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, SafeAreaView, RefreshControl, FlatList, StyleSheet } from 'react-native';
-import {
-  Avatar,
-  Title,
-  Caption, Paragraph,
-  Text,
-  TouchableRipple,
-} from 'react-native-paper';
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../components/context';
 
-import Share from 'react-native-share';
 import Card from '../components/CardRequests';
-import files from '../assets/filesBase64';
 import utils from '../model/utils';
 import Note from '../components/Note'
 

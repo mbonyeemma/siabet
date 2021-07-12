@@ -29,7 +29,7 @@ const AccountItems = ({itemData, account, onPress}) => {
 
   const local = moment.utc (itemData.created_at).local ().format ();
 
-  const date = moment (date).format ('MMMM Do, yyyy H:mma');
+  const date = moment (local).format ('MMMM Do, yyyy H:mma');
 
   return (
     <TouchableOpacity onPress={onPress}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { View, Text, Image, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import PlayButton from './PlayButton';
 import utils from '../model/utils';
@@ -9,7 +9,7 @@ import fail from '../assets/fail.png'
 import { AuthContext } from '../components/context';
 
 
-const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponent ,OpponentBetId}) => {
+const Card = ({ refRBSheet, itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponent ,OpponentBetId}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setComplete] = useState("");
   const { userData } = React.useContext(AuthContext);
@@ -29,7 +29,7 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
 
 
   const submitBet = async () => {
-
+    
     console.log(itemData)
 
     const requestOption = {
@@ -59,6 +59,7 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
       setIsLoading(false);
       const status = json.status;
       const message = json.message;
+      refRBSheet.current.close()
       if (status == 100) {
         Alert.alert("success",message);
       } else {
@@ -73,6 +74,7 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
  
 
   return (
+    
     <View style={styles.panel}>
 
       {isComplete!=""?<View style={{flex:1,alignContent:'center'}}>
@@ -109,8 +111,7 @@ const Card = ({ itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponen
           </Text>
         </View>
 
-
-
+ 
         <PlayButton onPressed={submitBet} isLoading={isLoading} headerText="Play" subHeader={`Confirm to stake ${amount} SIA`} />
 
       </View>

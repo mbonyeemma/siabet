@@ -10,16 +10,14 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import {Modal, Portal, Button, Provider} from 'react-native-paper';
+import {Modal, Portal} from 'react-native-paper';
 import {useTheme} from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Note from '../components/Note.js';
 import PlayButton from '../components/PlayButton.js';
 import calender from '../assets/calender.png';
 import DropDownPicker from 'react-native-dropdown-picker';
 import utils from '../model/utils';
-import {Root, Popup, Toast} from 'popup-ui';
-import {AuthContext} from '../components/context';
+ import {AuthContext} from '../components/context';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SubmitButton from '../components/SubmitButton'
@@ -128,29 +126,7 @@ const createPublicTopic = () => {
     setMode (currentMode);
   };
 
-  const showDatepicker = () => {
-    showMode ('date');
-  };
 
-  const showTimepicker = () => {
-    showMode ('time');
-  };
-
-  const ShowSuccess = () => {
-    Toast.show ({
-      title: 'User created',
-      text: 'Your user was successfully created, use the app now.',
-      color: '#2ecc71',
-      timing: 2000,
-      icon: (
-        <Image
-          source={require ('../assets/fail.png')}
-          style={{width: 25, height: 25}}
-          resizeMode="contain"
-        />
-      ),
-    });
-  };
 
   const containerStyle = {backgroundColor: 'white', padding: 20, margin: 20};
   return (
