@@ -50,7 +50,7 @@ const WalletStatement = ({ navigation }) => {
     };
     setRefresh(true)
     try {
-      const response = await fetch(utils.HORIZON+"/accounts/"+userData.public_key+"/payments?order=desc");
+      const response = await fetch(utils.HORIZON+"/accounts/"+userData.public_key+"/payments?order=desc&limit=50");
       const json = await response.json();
       console.log(json._embedded.records);
       setData(json._embedded.records);

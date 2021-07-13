@@ -15,7 +15,7 @@ const BetItem = ({itemInfo, itemData }) => {
       <RBSheet
         ref={ refRBSheet }
         closeOnDragDown={true}
-        height={320}
+        height={350}
       >
         <BottomSheetUI refRBSheet = {refRBSheet} OpponentBetId={itemData.bet_id} Opponent={itemData.user_id} isMatchingBet={true} itemData={itemInfo}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
       </RBSheet>

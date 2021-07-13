@@ -12,6 +12,8 @@ import {
 import CountDown from 'react-native-countdown-component';
 import {useTheme, Avatar, Divider} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
+
 import data from '../model/bets';
 import StarRating from './StarRating';
 import BetItem from '../components/betItem';
@@ -109,7 +111,7 @@ const TopicCard = ({itemData, onPress}) => {
               </Text>
 
               <Text style={styles.cardTitle}>{itemData.topic_question}</Text>
-              <View style={{flexDirection: 'row', marginTop: 5}}>
+              <View style={{flexDirection: 'row', marginTop: 1}}>
 
                 <Text style={styles.cardDetails}>suggested by </Text>
                 <Text style={styles.userText}>{itemData.username} </Text>
@@ -162,7 +164,24 @@ const TopicCard = ({itemData, onPress}) => {
                 </View>}
           </View>
 
-          {itemData.bets_placed  == 0 ||
+          <Divider style={{marginTop: 10, marginBottom: 10}} />
+
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1,justifyContent:'center', flexDirection: 'row'}}>
+              <Feather name="users" size={18} />
+              <Text style={{textAlign:'center'}}> {itemData.total_bets_placed}</Text>
+            </View>
+            <View style={{flex: 1, justifyContent:'center',  flexDirection: 'row'}}>
+              <Feather name="thumbs-up" color="green"  size={18} />
+              <Text> {itemData.total_bets_placed_yes}</Text>
+            </View>
+            <View style={{flex: 1, justifyContent:'center',  flexDirection: 'row'}}>
+              <Feather name="thumbs-down" color="red" size={18} />
+              <Text> {itemData.total_bets_placed_no}</Text>
+            </View>
+          </View>
+
+          {itemData.bets_placed == 0 ||
             getRange (itemData.topic_start_date) < 0 ||
             inPlay
             ? <View />
@@ -174,7 +193,6 @@ const TopicCard = ({itemData, onPress}) => {
                     flexDirection: 'row',
                     flex: 1,
                     marginTop: 10,
-                    marginBottom: 10,
                   }}
                 >
                   <View style={{flex: 3, flexDirection: 'row'}}>

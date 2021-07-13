@@ -139,15 +139,7 @@ const get_account = async () => {
   };
 
 
-  const refreshControl = () => {
-    return (
-      <RefreshControl
-        refreshing={() => setRefresh(true)}
-        onRefresh={() => getFeed()}
-      />
-    );
-  }
-
+ 
 
   const make_favorite = async (item) => {
 
@@ -170,7 +162,7 @@ const get_account = async () => {
         const response = await fetch(utils.ENDPONT + 'user/update_favorite', requestOption);
         const json = await response.json();
         console.log(json)
-        getFeed()
+        getFeed(selectedCategory)
     
     } catch (error) {
         console.error(error);

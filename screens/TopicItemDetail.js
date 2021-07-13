@@ -160,7 +160,7 @@ const updateData = data => {
           {isLoading ? <RBSheet
             ref={refRBSheet}
             closeOnDragDown={true}
-            height={320}
+            height={350}
           >
             <BottomSheetUI refRBSheet={refRBSheet} Opponent={opponentId} OpponentBetId="" isMatchingBet={false} itemData={itemData} PlayerChoice={playerChoice} amount={selectedAmount} betChoice={betChoice} />
           </RBSheet>

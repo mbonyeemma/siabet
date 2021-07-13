@@ -7,7 +7,7 @@ import {
   Animated,
   TouchableHighlight,
   TouchableOpacity,
-  StatusBar,
+  StatusBar,Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -43,7 +43,7 @@ const createTopicScreen = ({ navigation }) => {
       </TouchableOpacity>
 
 
-      <TouchableOpacity >
+      <TouchableOpacity onPress={()=>Alert.alert("","Private topics coming soon")}>
         <View style={styles.card}>
           <View style={styles.cardInfoBottom}>
 

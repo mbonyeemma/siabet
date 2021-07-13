@@ -4,7 +4,7 @@ import {
   TextInput,
   SafeAreaView,Text,
   FlatList,
-  StyleSheet,
+  StyleSheet,RefreshControl
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -35,10 +35,10 @@ const LeaderBoard = ({route, navigation}) => {
   };
 
   useEffect (() => {
-    get_all_users ('');
+    get_leader_board ('');
   }, []);
 
-  const get_all_users = async query => {
+  const get_leader_board = async query => {
     const requestOptions = {
       method: 'GET',
       headers: {'Content-Type': 'application/json'},
@@ -54,25 +54,7 @@ const LeaderBoard = ({route, navigation}) => {
       setRefresh (false);
     }
   };
-
-  const get_following = async () => {
-    const requestOptions = {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'},
-    };
-    try {
-      const response = await fetch (
-        utils.ENDPONT + 'user/following/' + userData.user_id
-      );
-      const json = await response.json ();
-      console.log (json);
-      setData (json);
-      setRefresh (false);
-    } catch (error) {
-      console.error (error);
-      setRefresh (false);
-    }
-  };
+ 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,6 +75,12 @@ const LeaderBoard = ({route, navigation}) => {
 
       <FlatList
         data={data}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={() => get_leader_board}
+          />
+        }
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
