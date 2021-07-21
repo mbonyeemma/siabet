@@ -35,14 +35,11 @@ const LeaderBoard = ({route, navigation}) => {
   };
 
   useEffect (() => {
-    get_leader_board ('');
+    get_leader_board ();
   }, []);
 
-  const get_leader_board = async query => {
-    const requestOptions = {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'},
-    };
+  const get_leader_board = async () => {
+  
     try {
       const response = await fetch (utils.ENDPONT + 'bet/leaderboard');
       const json = await response.json ();
@@ -78,7 +75,7 @@ const LeaderBoard = ({route, navigation}) => {
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={() => get_leader_board}
+            onRefresh={() => get_leader_board()}
           />
         }
         renderItem={renderItem}

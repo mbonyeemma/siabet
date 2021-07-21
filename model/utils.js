@@ -7,7 +7,7 @@ export default {
   },
 
   //HORIZON: 'https://horizon-testnet.stellar.org',
-  //ENDPONT: 'http://192.168.43.169:8000/',
+  //ENDPONT: 'http://192.168.43.169:8888/',
 
   HORIZON:'https://horizon.stellar.org',
   ENDPONT: 'http://18.116.9.199:8000/',

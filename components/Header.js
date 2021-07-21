@@ -23,6 +23,7 @@ const Header = ({ navigation, onPress, balance }) => {
 
         <View style={styles.main}>
             <Menu 
+              onBackdropPress={() => setOpen(false)}
             opened={isOpen} >
                 <MenuTrigger  onPress={() => setOpen(true)} style={styles.container} >
                     <Avatar.Image style={{backgroundColor: 'transparent'}} size={24} source={require('../assets/token.png')} />

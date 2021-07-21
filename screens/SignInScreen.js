@@ -92,7 +92,9 @@ const SignInScreen = ({ navigation }) => {
     }
     const postInfo = async () => {
 
-        console.log(".............................................")
+        if( data.username == "" ||  data.password ==""){
+            return Alert.alert("","username and password required")
+        }
 
         const requestOptions = {
             method: 'POST',

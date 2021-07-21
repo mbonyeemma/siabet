@@ -37,9 +37,14 @@ const AccountItems = ({itemData, account, onPress}) => {
   const local = moment.utc (itemData.created_at).local ().format ();
 
   const date = moment (local).format ('MMMM Do, yyyy H:mma');
-
+  if (itemData.type == 'payment') {
   format_string = format_string.substring(0, 5)+"***"+  format_string.slice(-5)
-
+  }
+  if (itemData.type == 'create_account') {
+    format_string = itemData.funder
+    message = "Create Account"
+    format_string = format_string.substring(0, 5)+"***"+  format_string.slice(-5)
+  }
 
   return (
     <TouchableOpacity onPress={onPress}>

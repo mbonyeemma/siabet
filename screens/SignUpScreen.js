@@ -29,6 +29,7 @@ const SignUnScreen = ({ navigation }) => {
         username: '',
         password: '',
         email: '',
+        referer:'',
         check_textInputChange: false,
         secureTextEntry: true,
         confirm_secureTextEntry: true,
@@ -36,8 +37,11 @@ const SignUnScreen = ({ navigation }) => {
     const [loading, setIsLoading] = React.useState(false)
 
     const postSignupInfo = async () => {
+        console.log(data)
+        if(data.username == "" ||  data.password == "" || data.email == ""  ){
+            return Alert.alert("Required Fields!","username, email and password are required")
+        }
 
-        console.log(".............................................")
 
         const requestOptions = {
             method: 'POST',
@@ -45,13 +49,12 @@ const SignUnScreen = ({ navigation }) => {
             body: JSON.stringify({
                 "username": data.username,
                 "password": data.password,
-                "email": data.email
+                "email": data.email,
+                "referer": data.referer,
             })
         };
         console.log(requestOptions)
         setIsLoading(true)
-
-
 
         try {
             console.log(requestOptions)
@@ -59,7 +62,6 @@ const SignUnScreen = ({ navigation }) => {
             const response = await fetch(utils.ENDPONT + 'user/register', requestOptions);
             const json = await response.json();
             console.log(json)
-            setIsLoading(false);
             const status = json.status;
             const message = json.message;
             if (status == 100) {
@@ -69,6 +71,7 @@ const SignUnScreen = ({ navigation }) => {
                 console.log(JSON.stringify(json.data))
                 signUp(JSON.stringify(json.data));
             } else {
+                setIsLoading(false);
                 Alert.alert("Failed", message);
             }
         } catch (error) {
@@ -107,7 +110,13 @@ const SignUnScreen = ({ navigation }) => {
             email: val
         });
     }
-
+    const handleRefChange = (val) => {
+        setData({
+            ...data,
+            referer: val
+        });
+    }
+    
     const updateSecureTextEntry = () => {
         setData({
             ...data,
@@ -141,10 +150,11 @@ const SignUnScreen = ({ navigation }) => {
                             size={20}
                         />
                         <TextInput
-                            placeholder="Enter Email"
+                            placeholder="Enter Email*"
                             style={styles.textInput}
                             autoCapitalize="none"
                             onChangeText={(val) => handleEmailChange(val)}
+                          
                         />
                         {data.check_textInputChange ?
                             <Animatable.View
@@ -217,6 +227,21 @@ const SignUnScreen = ({ navigation }) => {
                                 />
                             }
                         </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.text_footer}> </Text>
+                    <View style={styles.action}>
+                        <FontAwesome
+                            name="user-o"
+                            color="#05375a"
+                            size={20}
+                        />
+                        <TextInput
+                            placeholder="Enter Referer"
+                            style={styles.textInput}
+                            autoCapitalize="none"
+                            onChangeText={(val) => handleRefChange(val)}
+                        />
                     </View>
 
                    
