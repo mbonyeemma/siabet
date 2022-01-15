@@ -24,6 +24,7 @@ import PlayEarn from './PlayEarn';
 import TopicsApproval from './TopicsApproval';
 import WalletStatement from './WalletStatement';
 import LeaderBoard from './LeaderBoard';
+import BuySIA from './BuySIA';
 
 
 const TopicStack = createStackNavigator();
@@ -121,6 +122,15 @@ const MainTabScreen = ({ navigation }) => {
       component={WalletTransfer}
       options={() => ({
         title: "Transfer Assets ",
+        headerBackTitleVisible: false,
+        tabBarVisible: false,
+      })}
+    />
+      <TopicStack.Screen
+      name="BuySIA"
+      component={BuySIA}
+      options={() => ({
+        title: "Buy SIA ",
         headerBackTitleVisible: false,
         tabBarVisible: false,
       })}

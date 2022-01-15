@@ -24,6 +24,7 @@ export default {
     magento: 'rgb(234,67,53)',
     red: 'rgb(211,19,19)',
     blue: 'rgb(0,58,238)',
+    
     darkGray: 'rgb(240,240,240)',
     darkerGray: 'rgba(35,31,32,0.54)',
     lightBlack: 'rgba(35,31,32,0.87)',

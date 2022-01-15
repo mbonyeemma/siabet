@@ -9,7 +9,7 @@ import fail from '../assets/fail.png'
 import { AuthContext } from '../components/context';
 
 
-const Card = ({ refRBSheet, itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponent ,OpponentBetId}) => {
+const Card = ({callback, refRBSheet, itemData, PlayerChoice, amount, betChoice, isMatchingBet,Opponent ,OpponentBetId}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setComplete] = useState("");
   const { userData } = React.useContext(AuthContext);
@@ -61,6 +61,7 @@ const Card = ({ refRBSheet, itemData, PlayerChoice, amount, betChoice, isMatchin
       const message = json.message;
       refRBSheet.current.close()
       if (status == 100) {
+        callback
         Alert.alert("success",message);
       } else {
         Alert.alert("failed",message);

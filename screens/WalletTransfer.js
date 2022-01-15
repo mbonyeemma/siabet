@@ -129,8 +129,7 @@ const WalletTransfer = () => {
 
                     <TextInput
                         mode="outlined"
-                        autoCapitalize={"characters"}
-                        label="Receiver Public Key"
+                        label="Receiver Account"
                         placeholder="eg, GB4LHBRH53L..."
                         onSubmitEditing={() => ref_input2.current.focus()}
                         blurOnSubmit={false}

@@ -34,7 +34,7 @@ const TopicItemDetail = ({ navigation,route }) => {
 
 
   const initialMapState = {
-    amounts: ['100', '500', '1K', '5K', '10K', '50K', '100K', '500K', '1000K'],
+    amounts: ['100', '500', '1K', '5K', '10K', '20K', '50K', '100K', '500K', '1000K'],
   };
 
   const [state, setState] = useState(initialMapState);

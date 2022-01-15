@@ -5,7 +5,7 @@ import ButtonUI from './Button';
 import RBSheet from "react-native-raw-bottom-sheet";
 import BottomSheetUI from './BottomSheetUI';
 
-const BetItem = ({itemInfo, itemData }) => {
+const BetItem = ({callback,itemInfo, itemData }) => {
  const refRBSheet = useRef();
 
 
@@ -17,7 +17,7 @@ const BetItem = ({itemInfo, itemData }) => {
         closeOnDragDown={true}
         height={350}
       >
-        <BottomSheetUI refRBSheet = {refRBSheet} OpponentBetId={itemData.bet_id} Opponent={itemData.user_id} isMatchingBet={true} itemData={itemInfo}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
+        <BottomSheetUI callback={callback} refRBSheet = {refRBSheet} OpponentBetId={itemData.bet_id} Opponent={itemData.user_id} isMatchingBet={true} itemData={itemInfo}  PlayerChoice="p2p" amount={itemData.stake_amount} betChoice={itemData.bet_answer} />
       </RBSheet>
 
       

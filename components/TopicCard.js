@@ -20,7 +20,7 @@ import BetItem from '../components/betItem';
 import moment from 'moment';
 import PlayButton from '../components/Button';
 
-const TopicCard = ({itemData, onPress}) => {
+const TopicCard = ({callback, itemData, onPress}) => {
   const [showMore, setShowMore] = useState (false);
   const [month, setMonth] = useState ('');
   const [day, setDate] = useState ('false');
@@ -65,6 +65,7 @@ const TopicCard = ({itemData, onPress}) => {
     return (
       <BetItem
         itemData={item}
+        callback={callback}
         itemInfo={itemData}
         onPress={() =>
           navigation.navigate ('CardItemDetails', {itemData: item})}

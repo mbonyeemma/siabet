@@ -117,7 +117,7 @@ const ApprovalCard = ({ itemData, onPress }) => {
                                 <TouchableOpacity onPress={() => openResultItem("finished")}    >
                                     <Text style={{ backgroundColor: 'blue', color: '#FFF', padding: 10, borderRadius: 5 }}>Enter Result</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => openItem("cancelled")}    >
+                                <TouchableOpacity onPress={() => openResultItem("cancelled")}    >
                                     <Text style={{ backgroundColor: 'red', color: '#FFF', padding: 10, borderRadius: 5 }}>Cancel Topic</Text>
                                 </TouchableOpacity>
                             </View>

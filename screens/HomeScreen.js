@@ -57,7 +57,9 @@ const HomeScreen = ({ navigation }) => {
 
   }, []);
 
- 
+  const callback=()=>{
+    load_account()
+  }
   const load_account=()=>{
     get_account()
     get_categories()
@@ -194,6 +196,7 @@ const get_account = async () => {
     return (
       <Card
         itemData={item}
+        callback={callback}
         onPress={() => navigation.navigate('TopicItemDetail', { itemData: item })}
       />
     );

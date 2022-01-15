@@ -1,13 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {
   View,
-  TextInput,
   SafeAreaView,Text,
   FlatList,
   StyleSheet,RefreshControl
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Card from '../components/BoardCard';
 import {AuthContext} from '../components/context';
 import utils from '../model/utils';
